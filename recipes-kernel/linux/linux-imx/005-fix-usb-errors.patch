@@ -1,0 +1,15 @@
+diff --git a/drivers/usb/phy/phy-mxs-usb.c b/drivers/usb/phy/phy-mxs-usb.c
+index 0423d56..25bf91d 100644
+--- a/drivers/usb/phy/phy-mxs-usb.c
++++ b/drivers/usb/phy/phy-mxs-usb.c
+@@ -206,9 +206,7 @@ static bool mxs_phy_get_vbus_status(struct mxs_phy *mxs_phy)
+ 			ANADIG_USB1_VBUS_DET_STAT,
+ 			&vbus_value);
+ 	else if (mxs_phy->port_id == 1)
+-		regmap_read(mxs_phy->regmap_anatop,
+-			ANADIG_USB2_VBUS_DET_STAT,
+-			&vbus_value);
++		vbus_value = BM_ANADIG_USB1_VBUS_DET_STAT_VBUS_VALID;
+ 
+ 	if (vbus_value & BM_ANADIG_USB1_VBUS_DET_STAT_VBUS_VALID)
+ 		return true;

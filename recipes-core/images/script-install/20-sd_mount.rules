@@ -1,0 +1,1 @@
+KERNEL=="mmcblk0p1" SUBSYSTEM=="block" RUN+="/bin/mount /mnt/sd"
