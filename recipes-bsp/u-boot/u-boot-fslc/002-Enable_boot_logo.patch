@@ -1,7 +1,7 @@
 Index: git/arch/arm/cpu/armv7/mx6/Makefile
 ===================================================================
---- git.orig/arch/arm/cpu/armv7/mx6/Makefile	2017-09-21 12:39:04.581079589 +0200
-+++ git/arch/arm/cpu/armv7/mx6/Makefile	2017-09-21 12:39:05.153079578 +0200
+--- git.orig/arch/arm/cpu/armv7/mx6/Makefile	2017-09-21 12:45:21.073072318 +0200
++++ git/arch/arm/cpu/armv7/mx6/Makefile	2017-09-21 12:45:21.653072306 +0200
 @@ -11,3 +11,4 @@
  obj-$(CONFIG_SPL_BUILD)	     += ddr.o
  obj-$(CONFIG_SECURE_BOOT)    += hab.o
@@ -10,8 +10,8 @@ Index: git/arch/arm/cpu/armv7/mx6/Makefile
 \ No newline at end of file
 Index: git/arch/arm/cpu/armv7/mx6/clock.c
 ===================================================================
---- git.orig/arch/arm/cpu/armv7/mx6/clock.c	2017-09-21 12:39:04.581079589 +0200
-+++ git/arch/arm/cpu/armv7/mx6/clock.c	2017-09-21 12:39:05.153079578 +0200
+--- git.orig/arch/arm/cpu/armv7/mx6/clock.c	2017-09-21 12:45:21.073072318 +0200
++++ git/arch/arm/cpu/armv7/mx6/clock.c	2017-09-21 12:45:21.657072306 +0200
 @@ -12,15 +12,27 @@
  #include <asm/arch/crm_regs.h>
  #include <asm/arch/clock.h>
@@ -434,7 +434,7 @@ Index: git/arch/arm/cpu/armv7/mx6/clock.c
 Index: git/arch/arm/cpu/armv7/mx6/ipu.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/cpu/armv7/mx6/ipu.c	2017-09-21 12:39:05.157079578 +0200
++++ git/arch/arm/cpu/armv7/mx6/ipu.c	2017-09-21 12:45:21.657072306 +0200
 @@ -0,0 +1,3270 @@
 +/***************************************************************************
 +*
@@ -3708,8 +3708,8 @@ Index: git/arch/arm/cpu/armv7/mx6/ipu.c
 +
 Index: git/arch/arm/include/asm/arch-mx6/clock.h
 ===================================================================
---- git.orig/arch/arm/include/asm/arch-mx6/clock.h	2017-09-21 12:39:04.601079588 +0200
-+++ git/arch/arm/include/asm/arch-mx6/clock.h	2017-09-21 12:39:05.157079578 +0200
+--- git.orig/arch/arm/include/asm/arch-mx6/clock.h	2017-09-21 12:45:21.093072317 +0200
++++ git/arch/arm/include/asm/arch-mx6/clock.h	2017-09-21 12:45:21.657072306 +0200
 @@ -40,6 +40,16 @@
  	MXC_SATA_CLK,
  	MXC_NFC_CLK,
@@ -3730,7 +3730,7 @@ Index: git/arch/arm/include/asm/arch-mx6/clock.h
 Index: git/arch/arm/include/asm/arch-mx6/ipuv3h_reg_def.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/include/asm/arch-mx6/ipuv3h_reg_def.h	2017-09-21 12:39:05.161079577 +0200
++++ git/arch/arm/include/asm/arch-mx6/ipuv3h_reg_def.h	2017-09-21 12:45:21.665072306 +0200
 @@ -0,0 +1,13929 @@
 +//==========================================================================
 +//
@@ -17664,7 +17664,7 @@ Index: git/arch/arm/include/asm/arch-mx6/ipuv3h_reg_def.h
 Index: git/arch/arm/include/asm/imx-common/imx_pwm.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/include/asm/imx-common/imx_pwm.h	2017-09-21 12:39:05.161079577 +0200
++++ git/arch/arm/include/asm/imx-common/imx_pwm.h	2017-09-21 12:45:21.665072306 +0200
 @@ -0,0 +1,37 @@
 +/*
 + * Copyright (C) 2011 Freescale Semiconductor, Inc.
@@ -17706,7 +17706,7 @@ Index: git/arch/arm/include/asm/imx-common/imx_pwm.h
 Index: git/arch/arm/include/asm/imx-common/mxc_ipu.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/include/asm/imx-common/mxc_ipu.h	2017-09-21 12:39:05.161079577 +0200
++++ git/arch/arm/include/asm/imx-common/mxc_ipu.h	2017-09-21 12:45:21.665072306 +0200
 @@ -0,0 +1,30 @@
 +/*
 + * (C) Copyright 2008-2010 Freescale Semiconductor, Inc.
@@ -17740,8 +17740,8 @@ Index: git/arch/arm/include/asm/imx-common/mxc_ipu.h
 +#endif
 Index: git/drivers/misc/Makefile
 ===================================================================
---- git.orig/drivers/misc/Makefile	2017-09-21 12:39:04.837079584 +0200
-+++ git/drivers/misc/Makefile	2017-09-21 12:39:05.161079577 +0200
+--- git.orig/drivers/misc/Makefile	2017-09-21 12:45:21.329072313 +0200
++++ git/drivers/misc/Makefile	2017-09-21 12:45:21.665072306 +0200
 @@ -23,3 +23,4 @@
  obj-$(CONFIG_STATUS_LED) += status_led.o
  obj-$(CONFIG_TWL4030_LED) += twl4030_led.o
@@ -17751,7 +17751,7 @@ Index: git/drivers/misc/Makefile
 Index: git/drivers/misc/imx_pwm.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/drivers/misc/imx_pwm.c	2017-09-21 12:39:05.161079577 +0200
++++ git/drivers/misc/imx_pwm.c	2017-09-21 12:45:21.665072306 +0200
 @@ -0,0 +1,121 @@
 +/*
 + * Porting to u-boot:
@@ -17876,8 +17876,8 @@ Index: git/drivers/misc/imx_pwm.c
 +}
 Index: git/drivers/video/Makefile
 ===================================================================
---- git.orig/drivers/video/Makefile	2017-09-21 12:39:04.877079583 +0200
-+++ git/drivers/video/Makefile	2017-09-21 12:39:05.165079577 +0200
+--- git.orig/drivers/video/Makefile	2017-09-21 12:45:21.365072312 +0200
++++ git/drivers/video/Makefile	2017-09-21 12:45:21.665072306 +0200
 @@ -44,3 +44,5 @@
  obj-$(CONFIG_FORMIKE) += formike.o
  obj-$(CONFIG_AM335X_LCD) += am335x-fb.o
@@ -17887,7 +17887,7 @@ Index: git/drivers/video/Makefile
 Index: git/drivers/video/mxc_hdmi.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/drivers/video/mxc_hdmi.c	2017-09-21 12:39:05.165079577 +0200
++++ git/drivers/video/mxc_hdmi.c	2017-09-21 12:45:21.665072306 +0200
 @@ -0,0 +1,1769 @@
 +/*
 + * Copyright (C) 2013 Freescale Semiconductor, Inc.
@@ -19661,7 +19661,7 @@ Index: git/drivers/video/mxc_hdmi.c
 Index: git/drivers/video/mxc_hdmi.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/drivers/video/mxc_hdmi.h	2017-09-21 12:39:05.165079577 +0200
++++ git/drivers/video/mxc_hdmi.h	2017-09-21 12:45:21.665072306 +0200
 @@ -0,0 +1,1140 @@
 +/*
 + * Copyright (C) 2012 Freescale Semiconductor, Inc.
@@ -20805,9 +20805,27 @@ Index: git/drivers/video/mxc_hdmi.h
 +#endif
 Index: git/include/configs/wave_common.h
 ===================================================================
---- git.orig/include/configs/wave_common.h	2017-09-21 12:39:05.117079578 +0200
-+++ git/include/configs/wave_common.h	2017-09-21 12:39:05.165079577 +0200
-@@ -274,21 +274,197 @@
+--- git.orig/include/configs/wave_common.h	2017-09-21 12:45:21.613072307 +0200
++++ git/include/configs/wave_common.h	2017-09-21 12:59:43.541055661 +0200
+@@ -206,9 +206,16 @@
+ 			"fi; " \
+ 		"else " \
+ 			"bootz; " \
+-		"fi;\0"
++		"fi;\0" \
++		"logoload=echo Loading LOGO ...; " \
++			"if run logosd; then bmp display 0x20000000; else " \
++			"run logommc; bmp display 0x20000000; fi\0" \
++		"logommc=fatload mmc 1:1 0x20000000 image24.bmp\0" \
++		"logosd=fatload mmc 0:1 0x20000000 imagesd24.bmp\0"
++
+ 
+ #define CONFIG_BOOTCOMMAND \
++	"run logoload;recovery;" \
+ 	"mmc dev ${mmcdev};" \
+ 	"if mmc rescan; then " \
+ 		"if run loadbootscript; then " \
+@@ -274,21 +281,197 @@
  #define CONFIG_CMD_CACHE
  #endif
  
@@ -21023,8 +21041,8 @@ Index: git/include/configs/wave_common.h
  #endif                         /* __WAVE_COMMON_CONFIG_H */
 Index: git/arch/arm/include/asm/arch-mx6/crm_regs.h
 ===================================================================
---- git.orig/arch/arm/include/asm/arch-mx6/crm_regs.h	2017-09-21 12:39:04.601079588 +0200
-+++ git/arch/arm/include/asm/arch-mx6/crm_regs.h	2017-09-21 12:39:05.165079577 +0200
+--- git.orig/arch/arm/include/asm/arch-mx6/crm_regs.h	2017-09-21 12:45:21.093072317 +0200
++++ git/arch/arm/include/asm/arch-mx6/crm_regs.h	2017-09-21 12:45:21.665072306 +0200
 @@ -89,7 +89,7 @@
  	u32 analog_pll_video_tog;
  	u32 analog_pll_video_num;		/* 0x40b0 */
@@ -21044,8 +21062,8 @@ Index: git/arch/arm/include/asm/arch-mx6/crm_regs.h
  #endif /*__ARCH_ARM_MACH_MX6_CCM_REGS_H__ */
 Index: git/arch/arm/imx-common/iomux-v3.c
 ===================================================================
---- git.orig/arch/arm/imx-common/iomux-v3.c	2017-09-21 12:39:04.593079588 +0200
-+++ git/arch/arm/imx-common/iomux-v3.c	2017-09-21 12:39:05.165079577 +0200
+--- git.orig/arch/arm/imx-common/iomux-v3.c	2017-09-21 12:45:21.085072317 +0200
++++ git/arch/arm/imx-common/iomux-v3.c	2017-09-21 12:45:21.665072306 +0200
 @@ -77,3 +77,19 @@
  		p += stride;
  	}
@@ -21068,8 +21086,8 @@ Index: git/arch/arm/imx-common/iomux-v3.c
 +}
 Index: git/common/cmd_bmp.c
 ===================================================================
---- git.orig/common/cmd_bmp.c	2017-09-21 12:39:04.793079585 +0200
-+++ git/common/cmd_bmp.c	2017-09-21 12:39:05.165079577 +0200
+--- git.orig/common/cmd_bmp.c	2017-09-21 12:45:21.285072314 +0200
++++ git/common/cmd_bmp.c	2017-09-21 12:45:21.665072306 +0200
 @@ -241,6 +241,8 @@
  	ret = lcd_display_bitmap((ulong)bmp, x, y);
  #elif defined(CONFIG_VIDEO)
@@ -21081,8 +21099,8 @@ Index: git/common/cmd_bmp.c
  #endif
 Index: git/board/freescale/mx6qroj/mx6qroj.c
 ===================================================================
---- git.orig/board/freescale/mx6qroj/mx6qroj.c	2017-09-21 12:39:05.117079578 +0200
-+++ git/board/freescale/mx6qroj/mx6qroj.c	2017-09-21 12:42:19.509075824 +0200
+--- git.orig/board/freescale/mx6qroj/mx6qroj.c	2017-09-21 12:45:21.613072307 +0200
++++ git/board/freescale/mx6qroj/mx6qroj.c	2017-09-21 12:45:21.665072306 +0200
 @@ -30,6 +30,11 @@
  #include <power/pmic.h>
  #include <power/ltc3676_pmic.h>
@@ -21712,3 +21730,272 @@ Index: git/board/freescale/mx6qroj/mx6qroj.c
 +	flush_cache(VIDEO_FB_ADRS, VIDEO_SIZE);
 +	return (0);
 +}
+Index: git/common/Makefile
+===================================================================
+--- git.orig/common/Makefile	2017-09-21 12:45:21.285072314 +0200
++++ git/common/Makefile	2017-09-21 13:00:51.353054351 +0200
+@@ -197,6 +197,8 @@
+ obj-$(CONFIG_CMD_ZIP) += cmd_zip.o
+ obj-$(CONFIG_CMD_ZFS) += cmd_zfs.o
+ 
++obj-$(CONFIG_CMD_RECOVERY) += cmd_recovery.o
++
+ # others
+ obj-$(CONFIG_BOOTSTAGE) += bootstage.o
+ obj-$(CONFIG_CONSOLE_MUX) += iomux.o
+Index: git/common/cmd_recovery.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ git/common/cmd_recovery.c	2017-09-21 13:01:12.817053937 +0200
+@@ -0,0 +1,251 @@
++/*
++ * (C) Copyright 2017
++ * Max Agneni
++ * massimiliano.agneni@iptronix.com
++ *
++ * SPDX-License-Identifier: GPL-2.0+
++ */
++
++
++#include <common.h>
++#include <command.h>
++
++#include <usb.h>
++
++#include <part.h>
++#include <fat.h>
++#include <fs.h>
++
++#define IMAGE_FILE "recovery/image"
++
++#define IMG_ADDR 0x12000000
++#define FDT_ADDR 0x18000000
++#define RFS_ADDR 0x19000000
++
++typedef struct {
++	uint32_t  version;
++	uint32_t  img_pos;
++	uint32_t  img_len;
++	uint32_t  dtb_pos;
++	uint32_t  dtb_len;
++	uint32_t  rfs_pos;
++	uint32_t  rfs_len;
++}img_hdr_t;
++
++//static int usb_stor_curr_dev = -1; /* current device */
++
++/**
++ */
++int usb_stor_get(void)
++{
++	int cur_dev = -1; /* current device */
++
++/*
++	if (do_usb_stop_keyboard(1) != 0) {
++		return 1;
++	}
++*/
++	usb_stop();
++	printf("(Re)start USB...\n");
++
++	if (usb_init() >= 0) {
++		/* try to recognize storage devices immediately */
++		cur_dev = usb_stor_scan(1);
++		printf("USB cur_dev = %d\n", cur_dev);
++/*
++#ifdef CONFIG_USB_KEYBOARD
++		drv_usb_kbd_init();
++#endif
++*/
++	} else {
++		printf("USB init FAIL\n");
++	}
++
++	return cur_dev;
++}
++
++/**
++ */
++int file_load(char *itf, char *dev, uint32_t addr, char *name, uint32_t len, uint32_t pos)
++{
++	int   argc;
++	char *argv[7] = {
++		"fatload", "", "", "", "", "", ""};
++	char  sadr[11];
++	char  slen[11];
++	char  spos[11];
++
++	sprintf(sadr, "0x%08X", addr);
++	sprintf(slen, "0x%08X", len);
++	sprintf(spos, "0x%08X", pos);
++	argv[1] = itf;
++	argv[2] = dev;
++	argv[3] = sadr;
++	argv[4] = name;
++	argv[5] = slen;
++	argv[6] = spos;
++
++	argc = 7;
++
++	{
++		int   i;
++		for(i=0; i<7; i++){
++			printf("%s ", argv[i]);
++		}
++		printf("\n");
++	}
++	return do_load(NULL, 0, argc, argv, FS_TYPE_FAT);
++}
++
++/**
++ */
++uint32_t version_get(void)
++{
++	uint32_t  ver = 0;
++	uint32_t *addr = (uint32_t*)0x18000000;
++	int       ret;
++
++	printf("reading actual version from version file\n");
++
++	ret = file_load("mmc", "1:1", 0x18000000, "version", 0, 0);
++	if(ret==0){
++		ver = addr[0];
++		printf("actual version is %d.%d.%d.%d\n",
++						(uint8_t)(ver>>24), (uint8_t)(ver>>16),
++						(uint8_t)(ver>>8), (uint8_t)(ver));
++	}
++	return ver;
++}
++
++/**
++ */
++int header_get(img_hdr_t *hdr)
++{
++	uint32_t *addr = (uint32_t*)0x18000000;
++	int       ret;
++
++	printf("reading header from %s file\n", IMAGE_FILE);
++	ret = file_load("usb", "0:1", 0x18000000, IMAGE_FILE, 0x100, 0);
++	printf("file_load return %d\n", ret);
++
++	if (ret) {
++		return ret;
++	}
++
++	hdr->version = addr[0];
++	hdr->img_pos = addr[1];
++	hdr->img_len = addr[2];
++	hdr->dtb_pos = addr[3];
++	hdr->dtb_len = addr[4];
++	hdr->rfs_pos = addr[5];
++	hdr->rfs_len = addr[6];
++
++	printf( "Image Header\n"
++	" version %08X\n"
++	" img_pos %08X\n"
++	" img_len %08X\n"
++	" dtb_pos %08X\n"
++	" dtb_len %08X\n"
++	" rfs_pos %08X\n"
++	" rfs_len %08X\n",
++	hdr->version,
++	hdr->img_pos,
++	hdr->img_len,
++	hdr->dtb_pos,
++	hdr->dtb_len,
++	hdr->rfs_pos,
++	hdr->rfs_len);
++
++	return 0;
++}
++
++/**
++ */
++int bootz(void)
++{
++	int   argc;
++	char *argv[4] = {"bootz", NULL, NULL, NULL};
++	char  simg[11];
++	char  srfs[11];
++	char  sftd[11];
++
++	sprintf(simg, "0x%08X", IMG_ADDR);
++	sprintf(srfs, "0x%08X", RFS_ADDR);
++	sprintf(sftd, "0x%08X", FDT_ADDR);
++	argv[1] = simg;
++	argv[2] = srfs;
++	argv[3] = sftd;
++	argc = 4;
++
++	do_bootz(NULL, 0, argc, argv);
++
++	return 0;
++}
++
++/******************************************************************************
++ * recovery command intepreter
++ */
++static int do_recovery(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
++{
++	int ret;
++
++	if ( (argc == 1) /*&& (strncmp(argv[1], "check", 5) == 0)*/ ) {
++		ret = usb_stor_get();
++		if(ret==-1){
++			return 0;
++		}
++		uint32_t  actver;
++		//uint32_t *addr = (uint32_t*)0x18000000;
++		img_hdr_t img_hdr;
++		//char      boot[128];
++
++		actver = version_get();
++
++		ret = header_get(&img_hdr);
++		if(ret){
++			return 0;
++		}
++
++		if(img_hdr.version==actver){
++			printf("system version is the same\n");
++			return 0;
++		}
++
++		ret = file_load("usb", "0:1", IMG_ADDR, IMAGE_FILE,
++										img_hdr.img_len, img_hdr.img_pos);
++		if(ret){
++			printf("ERROR loading Linux Image\n");
++		}
++
++		ret = file_load("usb", "0:1", FDT_ADDR, IMAGE_FILE,
++										img_hdr.dtb_len, img_hdr.dtb_pos);
++		if(ret){
++			printf("ERROR loading Device Tree\n");
++		}
++
++		ret = file_load("usb", "0:1", RFS_ADDR, IMAGE_FILE,
++										img_hdr.rfs_len, img_hdr.rfs_pos);
++		if(ret){
++			printf("ERROR loading File System\n");
++		}
++/*
++		sprintf(boot, "bootz %08X %08X %08X", IMG_ADDR, RFS_ADDR, FDT_ADDR);
++		setenv("recoveryboot", boot);
++
++		setenv("bootcmd", "run recoveryboot");
++*/
++	bootz();
++
++		return 0;
++	}
++
++	return CMD_RET_USAGE;
++}
++
++U_BOOT_CMD(
++	recovery, 5, 0, do_recovery,
++	"recovery sub-system",
++	"Search USB storage. "
++	"If found search for recovery/image in partition 1, "
++	"load file header an set environment variables.\n"
++);

@@ -1,27 +1,7 @@
-Index: git/arch/arm/boot/dts/Makefile
-===================================================================
---- git.orig/arch/arm/boot/dts/Makefile	2017-09-20 10:40:09.630885996 +0200
-+++ git/arch/arm/boot/dts/Makefile	2017-09-20 10:40:12.642885938 +0200
-@@ -113,6 +113,7 @@
- 	imx53-mba53.dtb \
- 	imx53-qsb.dtb \
- 	imx53-smd.dtb \
-+	imx6dl-roj.dtb \
- 	imx6dl-sabreauto.dtb \
- 	imx6dl-sabreauto-ecspi.dtb \
- 	imx6dl-sabreauto-flexcan1.dtb \
-@@ -122,6 +123,7 @@
- 	imx6dl-sabresd-ldo.dtb \
- 	imx6dl-sabresd-pf200.dtb \
- 	imx6dl-wandboard.dtb \
-+	imx6q-roj.dtb \
- 	imx6q-arm2.dtb \
- 	imx6q-sabreauto.dtb \
- 	imx6q-sabreauto-ecspi.dtb \
-Index: git/arch/arm/boot/dts/imx6dl-roj.dts
+Index: git/arch/arm/boot/dts/waves.dts
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/boot/dts/imx6dl-roj.dts	2017-09-20 10:40:12.642885938 +0200
++++ git/arch/arm/boot/dts/waves.dts	2017-09-21 16:42:56.876797000 +0200
 @@ -0,0 +1,30 @@
 +/*
 + * Copyright (C) 2013 Freescale Semiconductor, Inc.
@@ -34,11 +14,11 @@ Index: git/arch/arm/boot/dts/imx6dl-roj.dts
 +/dts-v1/;
 +
 +#include "imx6dl.dtsi"
-+#include "imx6qdl-roj.dtsi"
++#include "waveqdl.dtsi"
 +
 +/ {
-+	model = "Roj i.MX6 DualLite/Solo SMARC Module";
-+	compatible = "fsl,imx6dl-roj", "fsl,imx6dl";
++	model = "NI wave i.MX6 DualLite/Solo SMARC Module";
++	compatible = "fsl,waves", "fsl,imx6dl";
 +};
 +
 +&ldb {
@@ -53,10 +33,10 @@ Index: git/arch/arm/boot/dts/imx6dl-roj.dts
 +&mxcfb2 {
 +	status = "okay";
 +};
-Index: git/arch/arm/boot/dts/imx6q-roj.dts
+Index: git/arch/arm/boot/dts/waveq.dts
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/boot/dts/imx6q-roj.dts	2017-09-20 10:48:46.290876018 +0200
++++ git/arch/arm/boot/dts/waveq.dts	2017-09-21 16:42:56.876797000 +0200
 @@ -0,0 +1,183 @@
 +/*
 + * Copyright 2012 Freescale Semiconductor, Inc.
@@ -72,12 +52,12 @@ Index: git/arch/arm/boot/dts/imx6q-roj.dts
 +
 +/dts-v1/;
 +
-+#include "imx6q-roj.dtsi"
-+#include "imx6qdl-roj.dtsi"
++#include "waveq.dtsi"
++#include "waveqdl.dtsi"
 +
 +/ {
-+	model = "ROJ iMX6 Smarc board";
-+	compatible = "fsl,imx6q-roj", "fsl,imx6q";
++	model = "NI wave Smarc board";
++	compatible = "fsl,waveq", "fsl,imx6q";
 +
 +	sound {
 +		compatible = "fsl,imx6q-sabrelite-sgtl5000",
@@ -241,10 +221,10 @@ Index: git/arch/arm/boot/dts/imx6q-roj.dts
 +	status = "okay";
 +};
 +
-Index: git/arch/arm/boot/dts/imx6q-roj.dtsi
+Index: git/arch/arm/boot/dts/waveq.dtsi
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/boot/dts/imx6q-roj.dtsi	2017-09-20 10:44:53.222880520 +0200
++++ git/arch/arm/boot/dts/waveq.dtsi	2017-09-21 16:42:56.876797000 +0200
 @@ -0,0 +1,206 @@
 +
 +/*
@@ -257,7 +237,7 @@ Index: git/arch/arm/boot/dts/imx6q-roj.dtsi
 + */
 +
 +#include "imx6q-pinfunc.h"
-+#include "imx6qdl-roj-base.dtsi"
++#include "waveqdl-base.dtsi"
 +
 +/ {
 +	aliases {
@@ -452,10 +432,10 @@ Index: git/arch/arm/boot/dts/imx6q-roj.dtsi
 +		};
 +	};
 +};
-Index: git/arch/arm/boot/dts/imx6qdl-roj-base.dtsi
+Index: git/arch/arm/boot/dts/waveqdl-base.dtsi
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/boot/dts/imx6qdl-roj-base.dtsi	2017-09-20 10:51:54.902872376 +0200
++++ git/arch/arm/boot/dts/waveqdl-base.dtsi	2017-09-21 16:42:56.876797000 +0200
 @@ -0,0 +1,1405 @@
 +/*
 + * Copyright 2011 Freescale Semiconductor, Inc.
@@ -1862,10 +1842,10 @@ Index: git/arch/arm/boot/dts/imx6qdl-roj-base.dtsi
 +		};
 +	};
 +};
-Index: git/arch/arm/boot/dts/imx6qdl-roj.dtsi
+Index: git/arch/arm/boot/dts/waveqdl.dtsi
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/boot/dts/imx6qdl-roj.dtsi	2017-09-20 10:54:08.266869800 +0200
++++ git/arch/arm/boot/dts/waveqdl.dtsi	2017-09-21 16:42:56.876797000 +0200
 @@ -0,0 +1,447 @@
 +/*
 + * Copyright 2012 Freescale Semiconductor, Inc.
@@ -2314,3 +2294,17 @@ Index: git/arch/arm/boot/dts/imx6qdl-roj.dtsi
 +	enable-sdio-wakeup;
 +	status = "okay";
 +};
+Index: git/arch/arm/boot/dts/Makefile
+===================================================================
+--- git.orig/arch/arm/boot/dts/Makefile	2017-09-21 16:42:53.984797056 +0200
++++ git/arch/arm/boot/dts/Makefile	2017-09-21 16:43:53.412795908 +0200
+@@ -136,7 +136,8 @@
+ 	imx6sl-evk-csi.dtb \
+ 	imx6sl-evk-ldo.dtb \
+ 	imx6sl-evk-pf200.dtb \
+-	vf610-twr.dtb
++	vf610-twr.dtb \
++	waveq.dtb
+ dtb-$(CONFIG_ARCH_MXS) += imx23-evk.dtb \
+ 	imx23-olinuxino.dtb \
+ 	imx23-stmp378x_devb.dtb \
