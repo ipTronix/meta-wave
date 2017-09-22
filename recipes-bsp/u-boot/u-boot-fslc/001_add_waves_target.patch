@@ -1,0 +1,595 @@
+Index: git/configs/waves_defconfig
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ git/configs/waves_defconfig	2017-09-21 11:52:34.201133478 +0200
+@@ -0,0 +1,3 @@
++CONFIG_SYS_EXTRA_OPTIONS="IMX_CONFIG=board/freescale/mx6qroj/mx6dl.cfg,MX6DL"
++CONFIG_ARM=y
++CONFIG_TARGET_WAVES=y
+Index: git/configs/waveq_defconfig
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ git/configs/waveq_defconfig	2017-09-21 11:10:33.837182153 +0200
+@@ -0,0 +1,3 @@
++CONFIG_SYS_EXTRA_OPTIONS="IMX_CONFIG=board/freescale/mx6qroj/imximage.cfg,MX6Q"
++CONFIG_ARM=y
++CONFIG_TARGET_WAVEQ=y
+Index: git/arch/arm/Kconfig
+===================================================================
+--- git.orig/arch/arm/Kconfig	2017-09-21 11:10:33.813182154 +0200
++++ git/arch/arm/Kconfig	2017-09-21 11:10:33.837182153 +0200
+@@ -459,6 +459,9 @@
+ config TARGET_VF610TWR
+ 	bool "Support vf610twr"
+ 
++config TARGET_WAVEQ
++	bool "Support NorthInvent wave on iMX6Q"
++
+ config ZYNQ
+ 	bool "Xilinx Zynq Platform"
+ 
+Index: git/board/freescale/mx6qroj/Kconfig
+===================================================================
+--- git.orig/board/freescale/mx6qroj/Kconfig	2017-09-21 11:10:33.813182154 +0200
++++ git/board/freescale/mx6qroj/Kconfig	2017-09-21 12:06:34.217117255 +0200
+@@ -16,3 +16,22 @@
+ 	default "mx6qroj"
+ 
+ endif
++
++if TARGET_WAVES
++
++config SYS_CPU
++	default "armv7"
++
++config SYS_BOARD
++	default "mx6qroj"
++
++config SYS_VENDOR
++	default "freescale"
++
++config SYS_SOC
++	default "mx6"
++
++config SYS_CONFIG_NAME
++	default "waves"
++
++endif
+Index: git/board/freescale/mx6qroj/mx6qroj.c
+===================================================================
+--- git.orig/board/freescale/mx6qroj/mx6qroj.c	2017-09-21 11:10:33.817182154 +0200
++++ git/board/freescale/mx6qroj/mx6qroj.c	2017-09-21 12:05:34.761118404 +0200
+@@ -220,6 +220,7 @@
+ }
+ 
+ #define USDHC1_CD_GPIO	IMX_GPIO_NR(2, 1)
++#define USDHC1_PWREN_GPIO	IMX_GPIO_NR(2, 2)
+ 
+ int board_mmc_getcd(struct mmc *mmc)
+ {
+@@ -256,6 +257,7 @@
+ 			imx_iomux_v3_setup_multiple_pads(
+ 				usdhc1_pads, ARRAY_SIZE(usdhc1_pads));
+ 			gpio_direction_input(USDHC1_CD_GPIO);
++			gpio_direction_output(USDHC1_PWREN_GPIO, 1);
+ 			usdhc_cfg[0].sdhc_clk = mxc_get_clock(MXC_ESDHC_CLK);
+ 			break;
+ 		case 1:
+@@ -402,19 +404,31 @@
+ }
+ 
+ #if defined(CONFIG_VIDEO_IPUV3)
++
++static void enable_lvds(struct display_info_t const *dev)
++{
++	struct iomuxc *iomux = (struct iomuxc *)
++				IOMUXC_BASE_ADDR;
++	u32 reg = readl(&iomux->gpr[2]);
++	reg |= IOMUXC_GPR2_DATA_WIDTH_CH0_24BIT |
++	       IOMUXC_GPR2_DATA_WIDTH_CH1_24BIT;
++	writel(reg, &iomux->gpr[2]);
++}
++
+ static void do_enable_hdmi(struct display_info_t const *dev)
+ {
+ 	imx_enable_hdmi_phy();
+ }
+ 
+ struct display_info_t const displays[] = {{
+-	.bus	= -1,
+-	.addr	= 0,
+-	.pixfmt	= IPU_PIX_FMT_RGB24,
+-	.detect	= detect_hdmi,
+-	.enable	= do_enable_hdmi,
+-	.mode	= {
+-		.name           = "HDMI",
++	.bus    = -1,
++	.addr   = 0,
++	.pixfmt = IPU_PIX_FMT_RGB24,
++	.detect = NULL,
++	.enable = enable_lvds,
++	.mode = {
++		.name           = "LVDS",
++
+ 		.refresh        = 60,
+ 		.xres           = 1024,
+ 		.yres           = 768,
+@@ -433,15 +447,54 @@
+ static void setup_display(void)
+ {
+ 	struct mxc_ccm_reg *mxc_ccm = (struct mxc_ccm_reg *)CCM_BASE_ADDR;
++	struct iomuxc *iomux = (struct iomuxc *)IOMUXC_BASE_ADDR;
+ 	int reg;
+ 
+ 	enable_ipu_clock();
+ 	imx_setup_hdmi();
+ 
++	/* Turn on LDB0, LDB1, IPU, IPU DI0 clocks */
++	reg = readl(&mxc_ccm->CCGR3);
++	reg |=  MXC_CCM_CCGR3_LDB_DI0_MASK | MXC_CCM_CCGR3_LDB_DI1_MASK;
++	writel(reg, &mxc_ccm->CCGR3);
++
++	/* set LDB0, LDB1 clk select to 011/011 */
++	reg = readl(&mxc_ccm->cs2cdr);
++	reg &= ~(MXC_CCM_CS2CDR_LDB_DI0_CLK_SEL_MASK
++		 | MXC_CCM_CS2CDR_LDB_DI1_CLK_SEL_MASK);
++	reg |= (3 << MXC_CCM_CS2CDR_LDB_DI0_CLK_SEL_OFFSET)
++	      | (3 << MXC_CCM_CS2CDR_LDB_DI1_CLK_SEL_OFFSET);
++	writel(reg, &mxc_ccm->cs2cdr);
++
++	reg = readl(&mxc_ccm->cscmr2);
++	reg |= MXC_CCM_CSCMR2_LDB_DI0_IPU_DIV | MXC_CCM_CSCMR2_LDB_DI1_IPU_DIV;
++	writel(reg, &mxc_ccm->cscmr2);
++
+ 	reg = readl(&mxc_ccm->chsccdr);
+ 	reg |= (CHSCCDR_CLK_SEL_LDB_DI0
+ 		<< MXC_CCM_CHSCCDR_IPU1_DI0_CLK_SEL_OFFSET);
++	reg |= (CHSCCDR_CLK_SEL_LDB_DI0
++		<< MXC_CCM_CHSCCDR_IPU1_DI1_CLK_SEL_OFFSET);
+ 	writel(reg, &mxc_ccm->chsccdr);
++
++	reg = IOMUXC_GPR2_BGREF_RRMODE_EXTERNAL_RES
++	     | IOMUXC_GPR2_DI1_VS_POLARITY_ACTIVE_LOW
++	     | IOMUXC_GPR2_DI0_VS_POLARITY_ACTIVE_LOW
++	     | IOMUXC_GPR2_BIT_MAPPING_CH1_SPWG
++	     | IOMUXC_GPR2_DATA_WIDTH_CH1_24BIT
++	     | IOMUXC_GPR2_BIT_MAPPING_CH0_SPWG
++	     | IOMUXC_GPR2_DATA_WIDTH_CH0_24BIT
++	     | IOMUXC_GPR2_LVDS_CH1_MODE_DISABLED
++	     | IOMUXC_GPR2_LVDS_CH0_MODE_ENABLED_DI0;
++	writel(reg, &iomux->gpr[2]);
++
++	reg = readl(&iomux->gpr[3]);
++	reg = (reg & ~(IOMUXC_GPR3_LVDS0_MUX_CTL_MASK
++			| IOMUXC_GPR3_HDMI_MUX_CTL_MASK))
++	    | (IOMUXC_GPR3_MUX_SRC_IPU1_DI0
++	       << IOMUXC_GPR3_LVDS0_MUX_CTL_OFFSET);
++	writel(reg, &iomux->gpr[3]);
++
+ }
+ #endif /* CONFIG_VIDEO_IPUV3 */
+ 
+@@ -495,6 +548,31 @@
+ 	0x01
+ };
+ 
++static unsigned char usb_init_blob_4port[] = {
++	0x11,	//data size
++	0x24,	//VID LSB
++	0x04,	//VID_MSB
++	0x14,	//PID LSB
++	0x25,	//PID MSB
++	0x00,	//DID LSB
++	0x00,	//DID MSB
++	0x8D,	//CFG1
++	0x10,	//CFG2
++	0x00,	//CFG3
++	0x00,	//NRD
++	0x00,	//PDS
++	0x00,	//PDB
++	0x01,	//MAXPS
++	0x32,	//MAXPB
++	0x01,	//HCMS
++	0x32,	//HCMB
++	0x32	//PWRT
++};
++static unsigned char usb_init_blob2_4port[] = {
++	0x01,
++	0x01
++};
++
+ static unsigned char CPLD_init_blob[] = {
+ 	0x10,
+ 	0xff
+@@ -522,6 +600,11 @@
+ 	i2c_write(0x2c, 0, 1, usb_init_blob_2port, sizeof(usb_init_blob_2port));
+ 	i2c_write(0x2c, 0xff, 1, usb_init_blob2_2port, sizeof(usb_init_blob2_2port));
+ 
++	/* 4 port External USB HUB initialization */
++	I2C_SET_BUS(1);
++	i2c_write(0x2c, 0, 1, usb_init_blob_4port, sizeof(usb_init_blob_4port));
++	i2c_write(0x2c, 0xff, 1, usb_init_blob2_4port, sizeof(usb_init_blob2_4port));
++
+ 	/* Remove Carrier from Reset*/
+ 	i2c_write(0x1, 0, 1, CPLD_init_blob, sizeof(CPLD_init_blob));
+ 
+@@ -580,7 +663,7 @@
+ 		break;
+ 	}
+ 
+-	printf("Board: MX6Q-Roj rev%s\n", revname);
++	printf("Board: Wave Evolution rev%s\n", revname);
+ 
+ 	return 0;
+ }
+Index: git/include/configs/waves.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ git/include/configs/waves.h	2017-09-21 11:48:42.557137952 +0200
+@@ -0,0 +1,53 @@
++/*
++ * Copyright (C) 2012 Freescale Semiconductor, Inc.
++ *
++ * Configuration settings for the ROJ i.MX6Q board.
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
++
++#ifndef __WAVE_CONFIG_H
++#define __WAVE_CONFIG_H
++
++#define CONFIG_MACH_TYPE      3529
++#define CONFIG_MXC_UART_BASE  UART2_BASE
++#define CONFIG_CONSOLE_DEV    "ttymxc1"
++#if defined CONFIG_MX6Q
++#define CONFIG_DEFAULT_FDT_FILE "waveq.dtb"
++#elif defined CONFIG_MX6DL
++#define CONFIG_DEFAULT_FDT_FILE "waves.dtb"
++#endif
++#define CONFIG_MMCROOT    "/dev/mmcblk0p2"
++#define PHYS_SDRAM_SIZE   (1u * 1024 * 1024 * 1024)
++
++/* USB Configs */
++#define CONFIG_CMD_USB
++#define CONFIG_USB_EHCI
++#define CONFIG_USB_EHCI_MX6
++#define CONFIG_USB_STORAGE
++#define CONFIG_USB_HOST_ETHER
++#define CONFIG_USB_ETHER_ASIX
++#define CONFIG_USB_MAX_CONTROLLER_COUNT 2
++#define CONFIG_EHCI_HCD_INIT_AFTER_RESET   /* For OTG port */
++#define CONFIG_MXC_USB_PORTSC (PORT_PTS_UTMI | PORT_PTS_PTW)
++#define CONFIG_MXC_USB_FLAGS  0
++
++#include "wave_common.h"
++
++#define CONFIG_SYS_FSL_USDHC_NUM 3
++#if defined(CONFIG_ENV_IS_IN_MMC)
++#define CONFIG_SYS_MMC_ENV_DEV   1
++#endif
++
++#define CONFIG_POWER
++#define CONFIG_POWER_I2C
++#define CONFIG_POWER_LTC3676
++#define CONFIG_POWER_LTC3676_I2C_ADDR 0x3c
++
++/* I2C Configs */
++#define CONFIG_CMD_I2C
++#define CONFIG_SYS_I2C
++#define CONFIG_SYS_I2C_MXC
++#define CONFIG_SYS_I2C_SPEED   100000
++
++#endif                         /* __WAVE_CONFIG_H */
+Index: git/include/configs/wave_common.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ git/include/configs/wave_common.h	2017-09-21 11:48:05.117138675 +0200
+@@ -0,0 +1,294 @@
++/*
++ * Copyright (C) 2012 Freescale Semiconductor, Inc.
++ *
++ * Configuration settings for the Freescale i.MX6Q SabreSD board.
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
++
++#ifndef __WAVE_COMMON_CONFIG_H
++#define __WAVE_COMMON_CONFIG_H
++
++#define CONFIG_MX6
++
++#include "mx6_common.h"
++#include <linux/sizes.h>
++
++#define CONFIG_DISPLAY_CPUINFO
++#define CONFIG_DISPLAY_BOARDINFO
++
++#include <asm/arch/imx-regs.h>
++#include <asm/imx-common/gpio.h>
++
++#define CONFIG_CMDLINE_TAG
++#define CONFIG_SETUP_MEMORY_TAGS
++#define CONFIG_INITRD_TAG
++#define CONFIG_REVISION_TAG
++
++#define CONFIG_SYS_GENERIC_BOARD
++
++/* Size of malloc() pool */
++#define CONFIG_SYS_MALLOC_LEN		(10 * SZ_1M)
++
++#define CONFIG_BOARD_EARLY_INIT_F
++#define CONFIG_BOARD_LATE_INIT
++#define CONFIG_MXC_GPIO
++
++#define CONFIG_MXC_UART
++
++#define CONFIG_CMD_FUSE
++#ifdef CONFIG_CMD_FUSE
++#define CONFIG_MXC_OCOTP
++#endif
++
++#define CONFIG_CMD_SATA
++/*
++ * SATA Configs
++ */
++#ifdef CONFIG_CMD_SATA
++#define CONFIG_DWC_AHSATA
++#define CONFIG_SYS_SATA_MAX_DEVICE	1
++#define CONFIG_DWC_AHSATA_PORT_ID	0
++#define CONFIG_DWC_AHSATA_BASE_ADDR	SATA_ARB_BASE_ADDR
++#define CONFIG_LBA48
++#define CONFIG_LIBATA
++#endif
++
++/* MMC Configs */
++#define CONFIG_FSL_ESDHC
++#define CONFIG_FSL_USDHC
++#define CONFIG_SYS_FSL_ESDHC_ADDR      0
++
++#define CONFIG_MMC
++#define CONFIG_CMD_MMC
++#define CONFIG_GENERIC_MMC
++#define CONFIG_BOUNCE_BUFFER
++#define CONFIG_CMD_EXT2
++#define CONFIG_CMD_FAT
++#define CONFIG_DOS_PARTITION
++
++#define CONFIG_CMD_PING
++#define CONFIG_CMD_DHCP
++#define CONFIG_CMD_MII
++#define CONFIG_CMD_NET
++#define CONFIG_FEC_MXC
++#define CONFIG_MII
++#define IMX_FEC_BASE			ENET_BASE_ADDR
++#define CONFIG_FEC_XCV_TYPE		RGMII
++#define CONFIG_ETHPRIME			"FEC"
++#define CONFIG_FEC_MXC_PHYADDR		4
++
++#define CONFIG_PHYLIB
++#define CONFIG_PHY_MICREL
++#define CONFIG_CMD_SF
++#ifdef CONFIG_CMD_SF
++#define CONFIG_SPI_FLASH
++#define CONFIG_SPI_FLASH_STMICRO
++#define CONFIG_MXC_SPI
++#define CONFIG_SF_DEFAULT_BUS		0
++#define CONFIG_SF_DEFAULT_CS		0
++#define CONFIG_SF_DEFAULT_SPEED		20000000
++#define CONFIG_SF_DEFAULT_MODE		SPI_MODE_0
++#endif
++
++/* allow to overwrite serial and ethaddr */
++#define CONFIG_ENV_OVERWRITE
++#define CONFIG_CONS_INDEX              1
++#define CONFIG_BAUDRATE                        115200
++
++/* Command definition */
++#include <config_cmd_default.h>
++
++#define CONFIG_CMD_BMODE
++#define CONFIG_CMD_BOOTZ
++#define CONFIG_CMD_SETEXPR
++#undef CONFIG_CMD_IMLS
++
++#define CONFIG_BOOTDELAY               1
++
++#define CONFIG_LOADADDR                        0x12000000
++#define CONFIG_SYS_TEXT_BASE           0x17800000
++
++#ifdef CONFIG_SUPPORT_EMMC_BOOT
++#define EMMC_ENV \
++	"emmcdev=1\0" \
++	"update_emmc_firmware=" \
++		"if test ${ip_dyn} = yes; then " \
++			"setenv get_cmd dhcp; " \
++		"else " \
++			"setenv get_cmd tftp; " \
++		"fi; " \
++		"if ${get_cmd} ${update_sd_firmware_filename}; then " \
++			"if mmc dev ${emmcdev} && " \
++				"mmc open ${emmcdev} 1; then "	\
++				"setexpr fw_sz ${filesize} / 0x200; " \
++				"setexpr fw_sz ${fw_sz} + 1; "	\
++				"mmc write ${loadaddr} 0x2 ${fw_sz}; " \
++				"mmc close ${emmcdev} 1; " \
++			"fi; "	\
++		"fi\0"
++#else
++#define EMMC_ENV ""
++#endif
++
++#define CONFIG_EXTRA_ENV_SETTINGS \
++	"script=boot.scr\0" \
++	"image=zImage\0" \
++	"fdt_file=" CONFIG_DEFAULT_FDT_FILE "\0" \
++	"fdt_addr=0x18000000\0" \
++	"boot_fdt=try\0" \
++	"ip_dyn=yes\0" \
++	"console=" CONFIG_CONSOLE_DEV "\0" \
++	"fdt_high=0xffffffff\0"	  \
++	"initrd_high=0xffffffff\0" \
++	"mmcdev=" __stringify(CONFIG_SYS_MMC_ENV_DEV) "\0" \
++	"mmcpart=1\0" \
++	"mmcroot=" CONFIG_MMCROOT " rootwait rw\0" \
++	"mmcrootpart=2\0" \
++	"update_sd_firmware=" \
++		"if test ${ip_dyn} = yes; then " \
++			"setenv get_cmd dhcp; " \
++		"else " \
++			"setenv get_cmd tftp; " \
++		"fi; " \
++		"if mmc dev ${mmcdev}; then "	\
++			"if ${get_cmd} ${update_sd_firmware_filename}; then " \
++				"setexpr fw_sz ${filesize} / 0x200; " \
++				"setexpr fw_sz ${fw_sz} + 1; "	\
++				"mmc write ${loadaddr} 0x2 ${fw_sz}; " \
++			"fi; "	\
++		"fi\0" \
++	EMMC_ENV	  \
++ "mmcsetroot=setenv mmcroot /dev/mmcblk${mmcdev}p${mmcrootpart} rootwait rw\0" \
++	"mmcargs=run mmcsetroot;setenv bootargs console=${console},${baudrate} " \
++		"root=${mmcroot}\0" \
++	"loadbootscript=" \
++		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
++	"bootscript=echo Running bootscript from mmc ...; " \
++		"source\0" \
++	"loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
++	"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
++	"mmcboot=echo Booting from mmc ...; " \
++		"run mmcargs; " \
++		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
++			"if run loadfdt; then " \
++				"bootz ${loadaddr} - ${fdt_addr}; " \
++			"else " \
++				"if test ${boot_fdt} = try; then " \
++					"bootz; " \
++				"else " \
++					"echo WARN: Cannot load the DT; " \
++				"fi; " \
++			"fi; " \
++		"else " \
++			"bootz; " \
++		"fi;\0" \
++	"netargs=setenv bootargs console=${console},${baudrate} " \
++		"root=/dev/nfs " \
++		"ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
++	"netboot=echo Booting from net ...; " \
++		"run netargs; " \
++		"if test ${ip_dyn} = yes; then " \
++			"setenv get_cmd dhcp; " \
++		"else " \
++			"setenv get_cmd tftp; " \
++		"fi; " \
++		"${get_cmd} ${image}; " \
++		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
++			"if ${get_cmd} ${fdt_addr} ${fdt_file}; then " \
++				"bootz ${loadaddr} - ${fdt_addr}; " \
++			"else " \
++				"if test ${boot_fdt} = try; then " \
++					"bootz; " \
++				"else " \
++					"echo WARN: Cannot load the DT; " \
++				"fi; " \
++			"fi; " \
++		"else " \
++			"bootz; " \
++		"fi;\0"
++
++#define CONFIG_BOOTCOMMAND \
++	"mmc dev ${mmcdev};" \
++	"if mmc rescan; then " \
++		"if run loadbootscript; then " \
++		"run bootscript; " \
++		"else " \
++			"if run loadimage; then " \
++				"run mmcboot; " \
++			"else run netboot; " \
++			"fi; " \
++		"fi; " \
++	"else run netboot; fi"
++
++#define CONFIG_ARP_TIMEOUT     200UL
++
++/* Miscellaneous configurable options */
++#define CONFIG_SYS_LONGHELP
++#define CONFIG_SYS_HUSH_PARSER
++#define CONFIG_SYS_PROMPT_HUSH_PS2     "> "
++#define CONFIG_AUTO_COMPLETE
++#define CONFIG_SYS_CBSIZE              256
++
++/* Print Buffer Size */
++#define CONFIG_SYS_PBSIZE (CONFIG_SYS_CBSIZE + sizeof(CONFIG_SYS_PROMPT) + 16)
++#define CONFIG_SYS_MAXARGS             16
++#define CONFIG_SYS_BARGSIZE CONFIG_SYS_CBSIZE
++
++#define CONFIG_SYS_MEMTEST_START       0x10000000
++#define CONFIG_SYS_MEMTEST_END         0x10010000
++#define CONFIG_SYS_MEMTEST_SCRATCH     0x10800000
++
++#define CONFIG_SYS_LOAD_ADDR           CONFIG_LOADADDR
++
++#define CONFIG_CMDLINE_EDITING
++#define CONFIG_STACKSIZE               (128 * 1024)
++
++/* Physical Memory Map */
++#define CONFIG_NR_DRAM_BANKS           1
++#define PHYS_SDRAM                     MMDC0_ARB_BASE_ADDR
++
++#define CONFIG_SYS_SDRAM_BASE          PHYS_SDRAM
++#define CONFIG_SYS_INIT_RAM_ADDR       IRAM_BASE_ADDR
++#define CONFIG_SYS_INIT_RAM_SIZE       IRAM_SIZE
++
++#define CONFIG_SYS_INIT_SP_OFFSET \
++	(CONFIG_SYS_INIT_RAM_SIZE - GENERATED_GBL_DATA_SIZE)
++#define CONFIG_SYS_INIT_SP_ADDR \
++	(CONFIG_SYS_INIT_RAM_ADDR + CONFIG_SYS_INIT_SP_OFFSET)
++
++/* FLASH and environment organization */
++#define CONFIG_SYS_NO_FLASH
++
++#define CONFIG_ENV_SIZE			(8 * 1024)
++
++#define CONFIG_ENV_IS_IN_MMC
++
++#if defined(CONFIG_ENV_IS_IN_MMC)
++#define CONFIG_ENV_OFFSET		(6 * 64 * 1024)
++#endif
++
++#define CONFIG_OF_LIBFDT
++
++#ifndef CONFIG_SYS_DCACHE_OFF
++#define CONFIG_CMD_CACHE
++#endif
++
++/* Framebuffer */
++#define CONFIG_VIDEO
++#define CONFIG_VIDEO_IPUV3
++#define CONFIG_CFB_CONSOLE
++#define CONFIG_VGA_AS_SINGLE_DEVICE
++#define CONFIG_SYS_CONSOLE_IS_IN_ENV
++#define CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE
++#define CONFIG_VIDEO_BMP_RLE8
++#define CONFIG_SPLASH_SCREEN
++#define CONFIG_SPLASH_SCREEN_ALIGN
++#define CONFIG_BMP_16BPP
++#define CONFIG_VIDEO_LOGO
++#define CONFIG_VIDEO_BMP_LOGO
++#define CONFIG_IPUV3_CLK 260000000
++#define CONFIG_IMX_HDMI
++#define CONFIG_IMX_VIDEO_SKIP
++
++#endif                         /* __WAVE_COMMON_CONFIG_H */
+Index: git/board/freescale/mx6qroj/MAINTAINERS
+===================================================================
+--- git.orig/board/freescale/mx6qroj/MAINTAINERS	2017-09-21 11:10:33.813182154 +0200
++++ git/board/freescale/mx6qroj/MAINTAINERS	2017-09-21 12:16:20.817105927 +0200
+@@ -2,6 +2,6 @@
+ M:	Dario Pennisi <dario@iptronix.com>
+ S:	Maintained
+ F:	board/freescale/mx6qroj/
+-F:	include/configs/mx6qroj.h
+-F:	configs/mx6dlroj_defconfig
+-F:	configs/mx6qroj_defconfig
++F:	include/configs/waveq.h
++F:	configs/waveq_defconfig
++F:	configs/waves_defconfig

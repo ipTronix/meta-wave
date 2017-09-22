@@ -12,7 +12,7 @@ SRC_URI_append_waveq = " \
 "
 
 SRC_URI_append_waves = " \
-   file://001_add_waveq_target.patch \
-   file://002-Enable_boot_logo_mx6dl.patch \
+   file://001_add_waves_target.patch \
+   file://002-Enable_boot_logo.patch \
 "
 
