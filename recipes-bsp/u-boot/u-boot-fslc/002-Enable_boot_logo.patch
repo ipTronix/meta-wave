@@ -21097,10 +21097,10 @@ Index: git/common/cmd_bmp.c
  #else
  # error bmp_display() requires CONFIG_LCD or CONFIG_VIDEO
  #endif
-Index: git/board/freescale/mx6qroj/mx6qroj.c
+Index: git/board/freescale/mx6dlroj/mx6dlroj.c
 ===================================================================
---- git.orig/board/freescale/mx6qroj/mx6qroj.c	2017-09-21 12:45:21.613072307 +0200
-+++ git/board/freescale/mx6qroj/mx6qroj.c	2017-09-21 12:45:21.665072306 +0200
+--- git.orig/board/freescale/mx6dlroj/mx6dlroj.c	2017-09-21 12:45:21.613072307 +0200
++++ git/board/freescale/mx6dlroj/mx6dlroj.c	2017-09-21 12:45:21.665072306 +0200
 @@ -30,6 +30,11 @@
  #include <power/pmic.h>
  #include <power/ltc3676_pmic.h>

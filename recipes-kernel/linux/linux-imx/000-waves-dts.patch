@@ -1,8 +1,8 @@
 Index: git/arch/arm/boot/dts/waves.dts
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/boot/dts/waves.dts	2017-09-18 14:42:44.957942120 +0200
-@@ -0,0 +1,189 @@
++++ git/arch/arm/boot/dts/waves.dts	2017-10-03 15:21:04.224868521 +0200
+@@ -0,0 +1,183 @@
 +/*
 + * Copyright 2012 Freescale Semiconductor, Inc.
 + * Copyright 2011 Linaro Ltd.
@@ -24,60 +24,59 @@ Index: git/arch/arm/boot/dts/waves.dts
 +	model = "Roj i.MX6 DualLite/Solo SMARC Module";
 +	compatible = "fsl,waves", "fsl,imx6dl";
 +
-+        sound {
-+                compatible = "fsl,imx6q-sabrelite-sgtl5000",
-+                             "fsl,imx-audio-sgtl5000";
-+                model = "imx6q-sabrelite-sgtl5000";
-+                ssi-controller = <&ssi1>;
-+                audio-codec = <&codec>;
-+                audio-routing =
-+                        "MIC_IN", "Mic Jack",
-+                        "Mic Jack", "Mic Bias",
-+                        "Headphone Jack", "HP_OUT";
-+                mux-int-port = <1>;
-+                mux-ext-port = <3>;
-+        };
++	sound {
++		compatible = "fsl,imx6q-sabrelite-sgtl5000",
++		             "fsl,imx-audio-sgtl5000";
++		model = "imx6q-sabrelite-sgtl5000";
++		ssi-controller = <&ssi1>;
++		audio-codec = <&codec>;
++		audio-routing = "MIC_IN", "Mic Jack",
++		                "Mic Jack", "Mic Bias",
++		                "Headphone Jack", "HP_OUT";
++		mux-int-port = <1>;
++		mux-ext-port = <3>;
++	};
 +
 +};
 +
 +&cpu0 {
-+       arm-supply = <&sw3_reg>;
-+       soc-supply = <&sw1_reg>;
-+       pu-supply = <&pu_dummy>; /* use pu_dummy if VDDSOC share with VDDPU */
++	arm-supply = <&sw3_reg>;
++	soc-supply = <&sw1_reg>;
++	pu-supply = <&pu_dummy>; /* use pu_dummy if VDDSOC share with VDDPU */
 +};
 +
 +&gpc {
-+        pu-supply = <&reg_pu>; /* ldo-bypass:use pu_dummy if VDDSOC share with VDDPU */
++	pu-supply = <&reg_pu>; /* ldo-bypass:use pu_dummy if VDDSOC share with VDDPU */
 +};
 +
 +&gpu {
-+        pu-supply = <&reg_pu>; /* ldo-bypass:use pu_dummy if VDDSOC share with VDDPU */
++	pu-supply = <&reg_pu>; /* ldo-bypass:use pu_dummy if VDDSOC share with VDDPU */
 +};
 +
 +&vpu {
-+        pu-supply = <&reg_pu>; /* ldo-bypass:use pu_dummy if VDDSOC share with VDDPU */
++	pu-supply = <&reg_pu>; /* ldo-bypass:use pu_dummy if VDDSOC share with VDDPU */
 +};
 +
 +&i2c1 {
-+        codec: sgtl5000@0a {
-+                compatible = "fsl,sgtl5000";
-+                reg = <0x0a>;
-+                clocks = <&clks 201>;
-+                VDDA-supply = <&reg_1p8v>;
-+                VDDIO-supply = <&reg_3p3v>;
-+        };
++	codec: sgtl5000@0a {
++		compatible = "fsl,sgtl5000";
++		reg = <0x0a>;
++		clocks = <&clks 201>;
++		VDDA-supply = <&reg_1p8v>;
++		VDDIO-supply = <&reg_3p3v>;
++	};
 +};
 +
 +&i2c2 {
-+       mt9m111@5d {
-+                compatible = "micron,mt9m111";
-+                reg = <0x5d>;
-+                clocks = <&clks 201>;
-+                clock-names = "csi_mclk";
-+                csi_id = <1>;
-+                mclk = <24000000>;
-+                mclk_source = <0>;
-+                          };
++	mt9m111@5d {
++		compatible = "micron,mt9m111";
++		reg = <0x5d>;
++		clocks = <&clks 201>;
++		clock-names = "csi_mclk";
++		csi_id = <1>;
++		mclk = <24000000>;
++		mclk_source = <0>;
++	};
 +};
 +
 +&i2c3 {
@@ -86,116 +85,111 @@ Index: git/arch/arm/boot/dts/waves.dts
 +		reg = <0x50>;
 +		pagesize = <32>;
 +	};
-+       pcf8563: rtc@51 {
-+               compatible = "nxp,pcf8563";
-+               reg = <0x51>;
-+       };
 +
-+       ltc3676: pmic@3c {
-+               compatible = "lltc,ltc3676";
-+               reg = <0x3c>;
++	pcf8563: rtc@51 {
++		compatible = "nxp,pcf8563";
++		reg = <0x51>;
++	};
 +
-+               regulators {
-+                       sw1_reg: sw1 {
-+                               regulator-min-microvolt = <779625>;
-+                               regulator-max-microvolt = <1512000>;
-+                               lltc,fb-voltage-divider = <187000 200000>;
-+                               regulator-ramp-delay = <7000>;
-+                               regulator-boot-on;
-+                               regulator-always-on;
-+                       };
++	ltc3676: pmic@3c {
++		compatible = "lltc,ltc3676";
++		reg = <0x3c>;
++		regulators {
++			sw1_reg: sw1 {
++				regulator-min-microvolt = <779625>;
++				regulator-max-microvolt = <1512000>;
++				lltc,fb-voltage-divider = <187000 200000>;
++				regulator-ramp-delay = <7000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
 +
-+                       sw2_reg: sw2 {
-+                               regulator-min-microvolt = <1031250>;
-+                               regulator-max-microvolt = <2000000>;
-+                               lltc,fb-voltage-divider = <270000 180000>;
-+                               regulator-ramp-delay = <7000>;
-+                               regulator-boot-on;
-+                               regulator-always-on;
-+                       };
++			sw2_reg: sw2 {
++				regulator-min-microvolt = <1031250>;
++				regulator-max-microvolt = <2000000>;
++				lltc,fb-voltage-divider = <270000 180000>;
++				regulator-ramp-delay = <7000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
 +
-+                       sw3_reg: sw3 {
-+                               regulator-min-microvolt = <779625>;
-+                               regulator-max-microvolt = <1512000>;
-+                               lltc,fb-voltage-divider = <187000 200000>;
-+                               regulator-ramp-delay = <7000>;
-+                               regulator-boot-on;
-+                               regulator-always-on;
-+                       };
++			sw3_reg: sw3 {
++				regulator-min-microvolt = <779625>;
++				regulator-max-microvolt = <1512000>;
++				lltc,fb-voltage-divider = <187000 200000>;
++				regulator-ramp-delay = <7000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
 +
-+                       sw4_reg: sw4 {
-+                               regulator-min-microvolt = <855937>;
-+                               regulator-max-microvolt = <1660000>;
-+                               lltc,fb-voltage-divider = <215000 200000>;
-+                               regulator-ramp-delay = <7000>;
-+                               regulator-boot-on;
-+                               regulator-always-on;
-+                       };
++			sw4_reg: sw4 {
++				regulator-min-microvolt = <855937>;
++				regulator-max-microvolt = <1660000>;
++				lltc,fb-voltage-divider = <215000 200000>;
++				regulator-ramp-delay = <7000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
 +
-+                       ldo1_reg: ldo1 {
-+                               regulator-min-microvolt = <0>;
-+                               regulator-max-microvolt = <0>;
-+                               lltc,fb-voltage-divider = <0 0>;
-+                               regulator-boot-on;
-+                               regulator-always-on;
-+                       };
++			ldo1_reg: ldo1 {
++				regulator-min-microvolt = <0>;
++				regulator-max-microvolt = <0>;
++				lltc,fb-voltage-divider = <0 0>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
 +
-+                       ldo2_reg: ldo2 {
-+                               regulator-min-microvolt = <2972500>;
-+                               regulator-max-microvolt = <2972500>;
-+                               lltc,fb-voltage-divider = <0 0>;
-+                               regulator-boot-on;
-+                               regulator-always-on;
-+                       };
++			ldo2_reg: ldo2 {
++				regulator-min-microvolt = <2972500>;
++				regulator-max-microvolt = <2972500>;
++				lltc,fb-voltage-divider = <0 0>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
 +
-+                       ldo3_reg: ldo3 {
-+                               regulator-min-microvolt = <1800000>;
-+                               regulator-max-microvolt = <1800000>;
-+                               lltc,fb-voltage-divider = <0 0>;
-+                               regulator-boot-on;
-+                       };
++			ldo3_reg: ldo3 {
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				lltc,fb-voltage-divider = <0 0>;
++				regulator-boot-on;
++			};
 +
-+                       ldo4_reg: ldo4 {
-+                               regulator-min-microvolt = <1207125>;
-+                               regulator-max-microvolt = <1207125>;
-+                               lltc,fb-voltage-divider = <0 0>;
-+                               regulator-boot-on;
-+                               regulator-always-on;
-+                       };
-+               };
-+       };
++			ldo4_reg: ldo4 {
++				regulator-min-microvolt = <1207125>;
++				regulator-max-microvolt = <1207125>;
++				lltc,fb-voltage-divider = <0 0>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++		};
++	};
 +};
 +
 +&mxcfb1 {
-+	status = "okay";
-+};
-+/*
-+&mxcfb2 {
 +	status = "okay";
 +};
 +
 +&sata {
 +	status = "okay";
 +};
-+*/
 +
 +&mipi_csi {
-+        status = "okay";
-+        ipu_id = <0>;
-+        csi_id = <1>;
-+        v_channel = <0>;
-+        lanes = <2>;
++	status = "okay";
++	ipu_id = <0>;
++	csi_id = <1>;
++	v_channel = <0>;
++	lanes = <2>;
 +};
 +
 +&ssi1 {
-+        fsl,mode = "i2s-slave";
-+        status = "okay";
++	fsl,mode = "i2s-slave";
++	status = "okay";
 +};
 +
 Index: git/arch/arm/boot/dts/waveq.dts
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/boot/dts/waveq.dts	2017-09-18 14:32:05.949954461 +0200
++++ git/arch/arm/boot/dts/waveq.dts	2017-09-22 12:00:46.347455361 +0200
 @@ -0,0 +1,185 @@
 +/*
 + * Copyright 2012 Freescale Semiconductor, Inc.
@@ -385,7 +379,7 @@ Index: git/arch/arm/boot/dts/waveq.dts
 Index: git/arch/arm/boot/dts/waves.dtsi
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/boot/dts/waves.dtsi	2017-09-18 14:40:41.717944501 +0200
++++ git/arch/arm/boot/dts/waves.dtsi	2017-09-22 12:00:46.347455361 +0200
 @@ -0,0 +1,206 @@
 +
 +/*
@@ -596,7 +590,7 @@ Index: git/arch/arm/boot/dts/waves.dtsi
 Index: git/arch/arm/boot/dts/waveqdl-base.dtsi
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/boot/dts/waveqdl-base.dtsi	2017-09-18 14:32:05.949954461 +0200
++++ git/arch/arm/boot/dts/waveqdl-base.dtsi	2017-09-22 12:00:46.347455361 +0200
 @@ -0,0 +1,1405 @@
 +/*
 + * Copyright 2011 Freescale Semiconductor, Inc.
@@ -2006,8 +2000,8 @@ Index: git/arch/arm/boot/dts/waveqdl-base.dtsi
 Index: git/arch/arm/boot/dts/waveqdl.dtsi
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/arch/arm/boot/dts/waveqdl.dtsi	2017-09-18 14:32:05.949954461 +0200
-@@ -0,0 +1,449 @@
++++ git/arch/arm/boot/dts/waveqdl.dtsi	2017-10-03 17:34:53.320713458 +0200
+@@ -0,0 +1,447 @@
 +/*
 + * Copyright 2012 Freescale Semiconductor, Inc.
 + * Copyright 2011 Linaro Ltd.
@@ -2122,7 +2116,6 @@ Index: git/arch/arm/boot/dts/waveqdl.dtsi
 +		mclk_source = <0>;
 +		status = "okay";
 +	};
-+
 +
 +	v4l2_cap_1 {
 +		compatible = "fsl,imx6q-v4l2-capture";
@@ -2331,7 +2324,6 @@ Index: git/arch/arm/boot/dts/waveqdl.dtsi
 +			};
 +			timing1: 768p60 {
 +				/*clock-frequency = <2935452>;*/
-+/*        clock-frequency = <32497920>;*/
 +				clock-frequency = <32497920>;
 +				hactive = <1024>;
 +				vactive = <768>;
@@ -2459,8 +2451,8 @@ Index: git/arch/arm/boot/dts/waveqdl.dtsi
 +};
 Index: git/arch/arm/boot/dts/Makefile
 ===================================================================
---- git.orig/arch/arm/boot/dts/Makefile	2017-09-21 16:42:53.984797056 +0200
-+++ git/arch/arm/boot/dts/Makefile	2017-09-21 16:43:53.412795908 +0200
+--- git.orig/arch/arm/boot/dts/Makefile	2017-09-22 12:00:43.315455419 +0200
++++ git/arch/arm/boot/dts/Makefile	2017-09-22 12:00:46.347455361 +0200
 @@ -136,7 +136,8 @@
  	imx6sl-evk-csi.dtb \
  	imx6sl-evk-ldo.dtb \

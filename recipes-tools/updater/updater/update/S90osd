@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+
+echo 0 > /sys/class/graphics/fb0/blank
+echo 0 > /sys/class/graphics/fbcon/cursor_blink
+echo -e '\033[9;0]' > /dev/tty1
+
+#originale
+/usr/bin/osd -platform eglfs &
+
+#con log
+#/usr/bin/strace /usr/bin/osd -platform eglfs &> /logosd.txt & 
+
+#/usr/bin/osd -platform eglfs &> /logosd.txt & 
+

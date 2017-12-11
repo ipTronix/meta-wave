@@ -1,23 +1,23 @@
 Index: git/configs/waves_defconfig
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/configs/waves_defconfig	2017-09-21 11:52:34.201133478 +0200
++++ git/configs/waves_defconfig	2017-10-02 10:55:42.078844633 +0200
 @@ -0,0 +1,3 @@
-+CONFIG_SYS_EXTRA_OPTIONS="IMX_CONFIG=board/freescale/mx6qroj/mx6dl.cfg,MX6DL"
++CONFIG_SYS_EXTRA_OPTIONS="IMX_CONFIG=board/freescale/mx6dlroj/mx6dl.cfg,MX6DL"
 +CONFIG_ARM=y
 +CONFIG_TARGET_WAVES=y
 Index: git/configs/waveq_defconfig
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/configs/waveq_defconfig	2017-09-21 11:10:33.837182153 +0200
++++ git/configs/waveq_defconfig	2017-10-02 10:55:42.078844633 +0200
 @@ -0,0 +1,3 @@
-+CONFIG_SYS_EXTRA_OPTIONS="IMX_CONFIG=board/freescale/mx6qroj/imximage.cfg,MX6Q"
++CONFIG_SYS_EXTRA_OPTIONS="IMX_CONFIG=board/freescale/mx6dlroj/imximage.cfg,MX6Q"
 +CONFIG_ARM=y
 +CONFIG_TARGET_WAVEQ=y
 Index: git/arch/arm/Kconfig
 ===================================================================
---- git.orig/arch/arm/Kconfig	2017-09-21 11:10:33.813182154 +0200
-+++ git/arch/arm/Kconfig	2017-09-21 11:10:33.837182153 +0200
+--- git.orig/arch/arm/Kconfig	2017-10-02 10:55:42.034844633 +0200
++++ git/arch/arm/Kconfig	2017-10-02 10:55:42.078844633 +0200
 @@ -459,6 +459,9 @@
  config TARGET_VF610TWR
  	bool "Support vf610twr"
@@ -28,12 +28,12 @@ Index: git/arch/arm/Kconfig
  config ZYNQ
  	bool "Xilinx Zynq Platform"
  
-Index: git/board/freescale/mx6qroj/Kconfig
+Index: git/board/freescale/mx6dlroj/Kconfig
 ===================================================================
---- git.orig/board/freescale/mx6qroj/Kconfig	2017-09-21 11:10:33.813182154 +0200
-+++ git/board/freescale/mx6qroj/Kconfig	2017-09-21 12:06:34.217117255 +0200
+--- git.orig/board/freescale/mx6dlroj/Kconfig	2017-10-02 10:55:42.034844633 +0200
++++ git/board/freescale/mx6dlroj/Kconfig	2017-10-02 10:55:42.078844633 +0200
 @@ -16,3 +16,22 @@
- 	default "mx6qroj"
+ 	default "mx6dlroj"
  
  endif
 +
@@ -55,10 +55,10 @@ Index: git/board/freescale/mx6qroj/Kconfig
 +	default "waves"
 +
 +endif
-Index: git/board/freescale/mx6qroj/mx6qroj.c
+Index: git/board/freescale/mx6dlroj/mx6dlroj.c
 ===================================================================
---- git.orig/board/freescale/mx6qroj/mx6qroj.c	2017-09-21 11:10:33.817182154 +0200
-+++ git/board/freescale/mx6qroj/mx6qroj.c	2017-09-21 12:05:34.761118404 +0200
+--- git.orig/board/freescale/mx6dlroj/mx6dlroj.c	2017-10-02 10:55:42.038844633 +0200
++++ git/board/freescale/mx6dlroj/mx6dlroj.c	2017-10-02 10:58:07.562841823 +0200
 @@ -220,6 +220,7 @@
  }
  
@@ -169,7 +169,7 @@ Index: git/board/freescale/mx6qroj/mx6qroj.c
  }
  #endif /* CONFIG_VIDEO_IPUV3 */
  
-@@ -495,6 +548,31 @@
+@@ -520,6 +573,31 @@
  	0x01
  };
  
@@ -201,9 +201,9 @@ Index: git/board/freescale/mx6qroj/mx6qroj.c
  static unsigned char CPLD_init_blob[] = {
  	0x10,
  	0xff
-@@ -522,6 +600,11 @@
- 	i2c_write(0x2c, 0, 1, usb_init_blob_2port, sizeof(usb_init_blob_2port));
- 	i2c_write(0x2c, 0xff, 1, usb_init_blob2_2port, sizeof(usb_init_blob2_2port));
+@@ -624,6 +702,11 @@
+ 	i2c_write(0x2c, 0, 1, usb_init_blob_4port, sizeof(usb_init_blob_4port));
+ 	i2c_write(0x2c, 0xff, 1, usb_init_blob2_4port, sizeof(usb_init_blob2_4port));
  
 +	/* 4 port External USB HUB initialization */
 +	I2C_SET_BUS(1);
@@ -213,11 +213,11 @@ Index: git/board/freescale/mx6qroj/mx6qroj.c
  	/* Remove Carrier from Reset*/
  	i2c_write(0x1, 0, 1, CPLD_init_blob, sizeof(CPLD_init_blob));
  
-@@ -580,7 +663,7 @@
+@@ -705,7 +788,7 @@
  		break;
  	}
  
--	printf("Board: MX6Q-Roj rev%s\n", revname);
+-	printf("Board: MX6DL-Roj rev%s\n", revname);
 +	printf("Board: Wave Evolution rev%s\n", revname);
  
  	return 0;
@@ -225,7 +225,7 @@ Index: git/board/freescale/mx6qroj/mx6qroj.c
 Index: git/include/configs/waves.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/include/configs/waves.h	2017-09-21 11:48:42.557137952 +0200
++++ git/include/configs/waves.h	2017-10-02 10:55:42.082844632 +0200
 @@ -0,0 +1,53 @@
 +/*
 + * Copyright (C) 2012 Freescale Semiconductor, Inc.
@@ -283,7 +283,7 @@ Index: git/include/configs/waves.h
 Index: git/include/configs/wave_common.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/include/configs/wave_common.h	2017-09-21 11:48:05.117138675 +0200
++++ git/include/configs/wave_common.h	2017-10-02 10:55:42.158844631 +0200
 @@ -0,0 +1,294 @@
 +/*
 + * Copyright (C) 2012 Freescale Semiconductor, Inc.
@@ -579,17 +579,17 @@ Index: git/include/configs/wave_common.h
 +#define CONFIG_IMX_VIDEO_SKIP
 +
 +#endif                         /* __WAVE_COMMON_CONFIG_H */
-Index: git/board/freescale/mx6qroj/MAINTAINERS
+Index: git/board/freescale/mx6dlroj/MAINTAINERS
 ===================================================================
---- git.orig/board/freescale/mx6qroj/MAINTAINERS	2017-09-21 11:10:33.813182154 +0200
-+++ git/board/freescale/mx6qroj/MAINTAINERS	2017-09-21 12:16:20.817105927 +0200
+--- git.orig/board/freescale/mx6dlroj/MAINTAINERS	2017-10-02 10:55:42.034844633 +0200
++++ git/board/freescale/mx6dlroj/MAINTAINERS	2017-10-02 10:57:24.970842645 +0200
 @@ -2,6 +2,6 @@
  M:	Dario Pennisi <dario@iptronix.com>
  S:	Maintained
- F:	board/freescale/mx6qroj/
--F:	include/configs/mx6qroj.h
+ F:	board/freescale/mx6dlsroj/
+-F:	include/configs/mx6dlroj.h
 -F:	configs/mx6dlroj_defconfig
 -F:	configs/mx6qroj_defconfig
-+F:	include/configs/waveq.h
++F:	include/configs/waves.h
 +F:	configs/waveq_defconfig
 +F:	configs/waves_defconfig

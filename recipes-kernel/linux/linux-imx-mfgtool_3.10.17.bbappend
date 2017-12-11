@@ -13,3 +13,9 @@ SRC_URI_append_waveq = " \
    file://defconfig \
 "
 
+SRC_URI_append_waves = " \
+   file://waves-dts.patch \
+   file://ltc3676.patch \
+   file://004-fix-mmc-addresses.patch \
+   file://defconfig \
+"
