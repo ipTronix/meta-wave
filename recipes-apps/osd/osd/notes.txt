@@ -1,0 +1,7 @@
+max@Develop:/media/max/storage/NIwave$ source setup-environment build
+bitbake osd
+/media/max/storage/NIwave/build/tmp/work/cortexa9hf-vfp-neon-poky-linux-gnueabi/osd/1.0-r0/image/usr/bin$
+
+
+--------------------------
+tftp 192.168.1.76 -g -r NIwave/osd

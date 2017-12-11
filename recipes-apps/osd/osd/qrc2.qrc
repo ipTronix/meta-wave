@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>fonts/Myriad-Pro_31655.ttf</file>
+        <file>fonts/Myriad-Pro-Bold_31631.ttf</file>
+        <file>img/ico_arrow_dwn.png</file>
+        <file>img/ico_dp.png</file>
+        <file>img/ico_dvi.png</file>
+        <file>img/logo.png</file>
+        <file>img/ico_arrow_up.png</file>
+        <file>img/ico_no_netw.png</file>
+    </qresource>
+</RCC>

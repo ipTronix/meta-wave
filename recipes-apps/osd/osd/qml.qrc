@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>TabSettings.qml</file>
+        <file>TabInputs.qml</file>
+        <file>TabTimeouts.qml</file>
+        <file>TabLoadSave.qml</file>
+        <file>TabStatus.qml</file>
+        <file>TabComm.qml</file>
+        <file>global.js</file>
+        <file>OsdSlider.qml</file>
+        <file>OsdComboBox.qml</file>
+        <file>OsdRadioButtons.qml</file>
+        <file>OsdNumBox.qml</file>
+        <file>OsdCheckBox.qml</file>
+        <file>OsdSpinBox.qml</file>
+        <file>CustomBtn.qml</file>
+        <file>OsdTabBtn.qml</file>
+        <file>OsdIpEditor.qml</file>
+        <file>PopupPIN.qml</file>
+        <file>InputRowDelegate.qml</file>
+        <file>Debug_VirtKeyboard.qml</file>
+    </qresource>
+</RCC>
