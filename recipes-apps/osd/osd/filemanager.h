@@ -11,6 +11,7 @@
 #include "global.h"
 #include "datamodel.h"
 
+
 #ifdef DEBUG_IMX_LORENZO
 #define CONFIG_PATH     "/opt/osd/config_files/"
 #define LOGO_FILE_PATH  "/opt/osd/config_files/"
