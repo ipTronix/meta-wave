@@ -885,8 +885,7 @@ int SerialProtocol::parse_in_serial_frame()
             FPGA_sw_rel[2] = frame_buff[8];
             FPGA_sw_rel[3] = frame_buff[9];
 
-            qDebug("videoSignal: %d LPC_sw_rel: %d.%d.%d.%d FPGA_sw_rel: %d.%d.%d.%d",
-                   videoSignal,
+            qDebug("LPC_sw_rel: %d.%d.%d.%d FPGA_sw_rel: %d.%d.%d.%d",
                    LPC_sw_rel[0],  LPC_sw_rel[1],  LPC_sw_rel[2],  LPC_sw_rel[3],
                    FPGA_sw_rel[0], FPGA_sw_rel[1], FPGA_sw_rel[2], FPGA_sw_rel[3]
                   );
