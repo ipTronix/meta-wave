@@ -11,6 +11,8 @@ Item {
     width: 480; height: 320
     Component.onCompleted: console.log("-- TabSettings")
 
+    property bool dimPot: data_model.dimming_pot_ena //se true disabilita il controllo (lo rende grigio)
+
     //---------------------------------------------------------------------------
     // Tastiera
     //---------------------------------------------------------------------------
@@ -27,6 +29,10 @@ Item {
                     currElement++
                 else
                     currElement = 0
+
+                if(dimPot && currElement === 0)
+                    currElement = 1;
+
                 //console.log("--> TabSettings currElement", currElement)
             }
         }
@@ -154,6 +160,7 @@ Item {
         //--------------- Row 1: "Dimming" ----------------
         Item {
             width: 390; height: 40
+
             Rectangle {
                 id: backg1
                 anchors.fill: parent
@@ -162,6 +169,7 @@ Item {
             }
             //"Dimming" label
             Text {
+                opacity: dimPot ? 0.5 : 1.0
                 anchors {
                     verticalCenter: parent.verticalCenter
                     left: parent.left; leftMargin: 5
@@ -173,12 +181,13 @@ Item {
             MouseArea {
                 anchors.fill: backg1
                 hoverEnabled: main.tabEditActive === false
-                onEntered: currElement = 0  // backg1.visible = true
-                onExited:  currElement = -1  // backg1.visible = false
+                onEntered: { if(!dimPot) currElement = 0 } // backg1.visible = true
+                onExited:  { if(!dimPot)currElement = -1 } // backg1.visible = false
                 onClicked: resOsdTout()
             }
             OsdSlider {
                 id: slider1
+                sliderEnabled: !dimPot
                 anchors {
                     verticalCenter: parent.verticalCenter
                     left: parent.left; leftMargin: 100
@@ -192,11 +201,13 @@ Item {
                 //Component.onCompleted: percenVal = data_model.dimLevel
 
                 onSliderValChanged:  {
+                    if(!dimPot) {
                     data_model.dimLevel = percVal
                     data_model.updateSetting(Glob.osdBRIGHTNESS, percVal)
                     resOsdTout()
                 }
              }
+        }
         }
 
         //--------------- Row 2: "Contrast" ----------------

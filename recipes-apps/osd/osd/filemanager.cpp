@@ -480,6 +480,9 @@ bool FileManager::loadOSDConfigFile()
 		file = &file2;
 	}
 
+	m_dm->setProperty("eth_enabled", false);
+	m_dm->setProperty("dimming_pot_ena", false);
+	
     if(file->open(QFile::ReadOnly))
     {
         QTextStream in(file);
@@ -512,11 +515,22 @@ bool FileManager::loadOSDConfigFile()
                     m_dm->setProperty("eth_enabled", false);
                 }
             }
+			else if (buff[0] == "DIMMING_POT")
+			{
+                QString pot = buff[1];
+                if(pot == "YES") {
+                    qDebug("Potentiometer enabled");
+                    m_dm->setProperty("dimming_pot_ena", true);
+                }
+                else {
+                    qDebug("Potentiometer disabled");
+                    m_dm->setProperty("dimming_pot_ena", false);
+                }
+			}
         }
     }
     else {
-        qDebug("wave_cfg.txt non trovato, ETHERNET disabilitata");
-        m_dm->setProperty("eth_enabled", false);
+        qDebug("wave_cfg.txt non trovato, ETHERNET disabilitata, Potenziometro disabilitato");
     }
     return true;
 }

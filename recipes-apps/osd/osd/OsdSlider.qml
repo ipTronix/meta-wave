@@ -11,6 +11,7 @@ MouseArea {
 
     //posizione cursore
     property int percenVal: 0
+    property bool sliderEnabled: true
 
     //cifra numerica (default = posizione cursore)
     property int percenDigit: percenVal
@@ -50,7 +51,7 @@ MouseArea {
         id: bar_sx
         anchors { left: slider.left; verticalCenter: parent.verticalCenter }
         width: 0; height: 8
-        color: color_HeavyDark
+        color: sliderEnabled ?  color_HeavyDark : "gray"
     }
 
     //cursor
@@ -59,7 +60,7 @@ MouseArea {
         anchors.verticalCenter: parent.verticalCenter
         width: 10; height: 20
         color: "white"
-        border { color: "black"; width: 1 }
+        border { color: sliderEnabled ? "black" : "gray"; width: 1 }
     }
 
     //percentage %left
@@ -68,12 +69,14 @@ MouseArea {
         anchors.verticalCenter: parent.verticalCenter
         anchors { left: slider.right; leftMargin: 5 }
         //anchors { centerIn: slider; verticalCenterOffset: -18 }
-        color: "black"
+        color: sliderEnabled ? "black" : "gray"
         font { family: "Myriad Pro"; pixelSize: 16 }
         text: slider.percenDigit + "%"
     }
 
     onMouseXChanged: {
+        if(!sliderEnabled) return
+
         var buf = mouseX;
 
         //clamps

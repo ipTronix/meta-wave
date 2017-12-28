@@ -50,6 +50,8 @@ ApplicationWindow {
     //per navigazione da tastiera
     property bool tabEditActive: false
     property int currTab: 0
+	
+	property bool dimmingPot: data_model.dimming_pot_ena
 
     signal key_enter
     signal key_plus
@@ -278,10 +280,13 @@ Rectangle {
                 {
                     console.log("osdVisible false")
                     //se il monitor è il MultiDim master invio tasto + in broadcast
-                    if(data_model.mdimMaster)
-                        data_model.doBrightBroadUP()
-                    else
-                        data_model.doBrightUP()
+					if (!dimmingPot)
+					{
+						if(data_model.mdimMaster)
+							data_model.doBrightBroadUP()
+						else
+							data_model.doBrightUP()
+					}
                 }
                 //OSD aperto
                 else {
@@ -319,11 +324,14 @@ Rectangle {
                 else if(osdVisible === false)
                 {
                     console.log("osdVisible false")
-                    //se il monitor è il MultiDim master invio tasto + in broadcast
-                    if(data_model.mdimMaster)
-                        data_model.doBrightBroadDOWN()
-                    else
-                        data_model.doBrightDOWN()
+					if (!dimmingPot)
+					{
+						//se il monitor è il MultiDim master invio tasto + in broadcast
+						if(data_model.mdimMaster)
+							data_model.doBrightBroadDOWN()
+						else
+							data_model.doBrightDOWN()
+					}
                 }
                 //OSD aperto
                 else {

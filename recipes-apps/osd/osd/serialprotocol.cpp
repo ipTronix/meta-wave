@@ -260,6 +260,8 @@ int SerialProtocol::Cmd_COMMAND(int cmdID)
 	return retVal;
 }
 
+#define ETHERNET_FLAG		0x01
+#define POTENTIOMETER_FLAG	0x02
 //-------------------------------------------------------------------------
 int SerialProtocol::Cmd_OSD_READY()
 {
@@ -273,7 +275,9 @@ int SerialProtocol::Cmd_OSD_READY()
     txbuff[1] = 0x55;
     txbuff[2] = cmdOSD_READY;
     txbuff[3] = m_dm->property("logo_present").toInt();
-    txbuff[4] = 0;                  //reserved
+	txbuff[4] = 0;
+    txbuff[4] |= (m_dm->property("eth_enabled").toBool())? ETHERNET_FLAG : 0;
+    txbuff[4] |= (m_dm->property("dimming_pot_ena").toBool())? POTENTIOMETER_FLAG : 0;
     txbuff[5] = LO(m_dm->tabs_crc16);
     txbuff[6] = HI(m_dm->tabs_crc16);
     txbuff[7] = 0x33;               //tail
