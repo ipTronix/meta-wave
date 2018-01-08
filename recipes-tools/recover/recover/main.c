@@ -19,8 +19,10 @@ typedef struct {
   uint32_t version; // version of linux-dtb-fs
   uint32_t img_pos; // linux image
   uint32_t img_len;
-  uint32_t dtb_pos; // device tree blob
-  uint32_t dtb_len;
+  uint32_t dt1_pos; // device tree blob
+  uint32_t dt1_len;
+  uint32_t dt2_pos;
+  uint32_t dt2_len;
   uint32_t rfs_pos; // ram file system
   uint32_t rfs_len;
 }sImgHdr, *psImgHdr;
@@ -109,19 +111,30 @@ psImgHdr imgHdrGet(char* imgfile)
   }
   close(fd);
 
+  if( (imgHdr.rfs_pos==0) &&  (imgHdr.rfs_len==0) ){
+    imgHdr.rfs_pos = imgHdr.dt2_pos;
+    imgHdr.rfs_len = imgHdr.dt2_len;
+    imgHdr.dt2_pos = imgHdr.dt1_pos;
+    imgHdr.dt2_len = imgHdr.dt1_len;
+  }
+
   printf( "Image Header\n"
           " version %08X\n"
           " img_pos %08X\n"
           " img_len %08X\n"
-          " dtb_pos %08X\n"
-          " dtb_len %08X\n"
+          " dt1_pos %08X\n"
+          " dt1_len %08X\n"
+          " dt2_pos %08X\n"
+          " dt2_len %08X\n"
           " rfs_pos %08X\n"
           " rfs_len %08X\n",
           imgHdr.version,
           imgHdr.img_pos,
           imgHdr.img_len,
-          imgHdr.dtb_pos,
-          imgHdr.dtb_len,
+          imgHdr.dt1_pos,
+          imgHdr.dt1_len,
+          imgHdr.dt2_pos,
+          imgHdr.dt2_len,
           imgHdr.rfs_pos,
           imgHdr.rfs_len);
 
