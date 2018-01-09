@@ -32,32 +32,17 @@
 #define LO_BYTE(x) (unsigned char)(x % 256)
 #define HI_BYTE(x) (unsigned char)(x / 256)
 
-
-/**
- */
-typedef struct {
-  uint32_t version; // version of linux-dtb-fs
-  uint32_t img_pos; // linux image
-  uint32_t img_len;
-  uint32_t dtb_pos; // device tree blob
-  uint32_t dtb_len;
-  uint32_t rfs_pos; // ram file system
-  uint32_t rfs_len;
-}sImgHdr, *psImgHdr;
-
-sImgHdr imgHdr;
-
-
 enum e_dest { DEST_LPC = 50, DEST_FPGA = 51 };
 
-int serial_fd;
+int           serial_fd;
 unsigned char txbuff[264];
 unsigned char rxbuff[16];
-int chunk_num;
+int           chunk_num;
 
 //-----------------------------------------------------------------------
 int openSerialPort()
 {
+    printf ("Opening serial: %s\n", SERIAL_PORT);
     serial_fd = open(SERIAL_PORT, O_RDWR | O_NOCTTY);
     if(serial_fd < 0) {
         printf ("Error %d opening serial: %s\n", errno, strerror(errno));
@@ -68,7 +53,7 @@ int openSerialPort()
     struct termios tty;
     memset (&tty, 0, sizeof tty);
     if (tcgetattr (serial_fd, &tty) != 0) {
-        printf("error %d from tcgetattr", errno);
+        printf("error %d from tcgetattr\n", errno);
         return -1;
     }
 
@@ -337,111 +322,6 @@ int waitBootloaderMode(void)
     return -1;
 }
 
-//-----------------------------------------------------------------------
-int imageGet(void)
-{
-  int     fd;
-  int     rb;
-  int     wb;
-  size_t  ofs;
-  uint8_t buf[1024];
-  int     dstfd;
-  int     ret;
-  char   *imgfile = "/mnt/usb/recovery/image";
-  char   *isofile = "/home/root/update.iso";
-  //char   *imgfile = "image";
-  //char   *isofile = "/home/max/update.iso";
-  //char   *isofile = "update.iso";
-
-  mkdir("/mnt/usb", 0777);
-  ret = mount("/dev/sda1", "/mnt/usb", "vfat", 0, "");
-  if(ret){
-    printf("ERROR:Mount /mnt/usb FAILED\n");
-    return -1;
-  }
-  printf("Mount created at /mnt/usb...\n");
-
-  fd = open(imgfile, O_RDONLY);
-  if(fd<0){
-    printf("File open error %d: %s\n", errno, strerror(errno));
-    umount("/mnt/usb");
-    return -1;
-  }
-  rb = read(fd, (void*)&imgHdr, sizeof(sImgHdr));
-  if(rb!=sizeof(sImgHdr)){
-    printf("Error reading image file header\n");
-    umount("/mnt/usb");
-    return -1;
-  }
-
-  printf( "Image Header\n"
-          " version %08X\n"
-          " img_pos %08X\n"
-          " img_len %08X\n"
-          " dtb_pos %08X\n"
-          " dtb_len %08X\n"
-          " rfs_pos %08X\n"
-          " rfs_len %08X\n",
-          imgHdr.version,
-          imgHdr.img_pos,
-          imgHdr.img_len,
-          imgHdr.dtb_pos,
-          imgHdr.dtb_len,
-          imgHdr.rfs_pos,
-          imgHdr.rfs_len);
-
-  // copia iso in home
-  ofs = imgHdr.rfs_pos + imgHdr.rfs_len;
-  ofs = (ofs+127) & ~127;
-printf("ofs: %d %08X\n", ofs, ofs);
-  ret = lseek(fd, ofs, SEEK_SET);
-printf("retofs: %08X\n", ret);
-  if(ret!=ofs){
-    printf("ERROR: lseek %d %d %d %s\n", ret, ofs, errno, strerror(errno));
-    close(fd);
-    return -1;
-  }
-
-  printf("open %s\n", isofile);
-  dstfd = open(isofile, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-  if(dstfd<0){
-    printf("ERROR:open %s\n", isofile);
-    close(fd);
-    return -1;
-  }
-int size=0;
-  for(;;){
-    rb = read(fd, (void*)buf, 1024);
-    if(rb<=0){
-    printf("ERROR: read %d %d %s\n", rb, errno, strerror(errno));
-      break;
-    }
-    wb = write(dstfd, buf, rb);
-    if(wb!=rb){
-      printf("errore scrittura\n");
-      close(fd);
-      close(dstfd);
-      return -1;
-    }
-    size += rb;
-  }
-  close(dstfd);
-  close(fd);
-printf("copied %d %08X\n", size, size);
-
-  // monta la iso in /mnt/iso
-  mkdir("/mnt/iso", 0777);
-  sprintf(buf, "mount %s /mnt/iso", isofile);
-  ret = system(buf);
-  if(ret){
-    printf("ERROR: mounting iso image %d %d %s\n", ret, errno, strerror(errno));
-    return -1;
-  }
-
-//  printf("Unmount /mnt/usb\n");
-//  umount("/mnt/usb");
-  return 0;
-}
 
 //-----------------------------------------------------------------------
 unsigned long version_get()
@@ -496,8 +376,8 @@ int main(void)
         return -1;
     }
  */
-/**/    imgHdr.version = version_get();/**/
-    printf("Upgrade version: %08X\n", imgHdr.version);
+    version = version_get();
+    printf("Upgrade version: %08X\n", version);
 
     fflush(stdout);
 
@@ -546,7 +426,7 @@ int main(void)
 
       fd = open("/mnt/p1/version", O_WRONLY | O_CREAT | O_TRUNC);
       if(fd>=0){
-        write(fd, (void*)&imgHdr.version, 4);
+        write(fd, (void*)&version, 4);
         close(fd);
       }else{
         printf("File open error %d: %s\n", errno, strerror(errno));
