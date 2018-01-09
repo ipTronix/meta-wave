@@ -7,7 +7,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 PRINC := "${@int(PRINC) + 2}"
 
 SRC_URI_append_waveq = " \
-   file://001_add_roj_target.patch
+   file://001_add_roj_target.patch \
 "
 
 SRC_URI_append_waves = " \
