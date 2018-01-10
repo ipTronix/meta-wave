@@ -1,0 +1,151 @@
+#!/bin/sh
+ 
+# udhcpc script edited by Tim Riker <Tim@Rikers.org>
+# script modificato per salvare i parametri di rete ricevuti dal server DHCP
+# nel file temporaneo /var/volatile/dhcp_resp
+
+echo "udhcpc: eseguo script 50default"
+
+DHCP_RESULTS=/var/volatile/dhcp_resp
+RESOLV_CONF="/etc/resolv.conf"
+
+#rimozione preliminare del file temporaneo
+rm $DHCP_RESULTS &> /dev/null
+ 
+[ -z "$1" ] && echo "udhcpc error: should be called from udhcpc" && exit 1
+
+[ -n "$subnet" ] && NETMASK="netmask $subnet"
+
+# return 0 if root is mounted on a network filesystem
+root_is_nfs() {
+    sed -n 's/^[^ ]* \([^ ]*\) \([^ ]*\) .*$/\1 \2/p' /proc/mounts |
+    grep -q "^/ \(nfs\|smbfs\|ncp\|coda\)$"
+}
+
+have_bin_ip=0
+if [ -x /sbin/ip ]; then
+  have_bin_ip=1
+  BROADCAST="broadcast +"
+fi
+
+[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+
+case "$1" in
+    deconfig)
+        echo "udhcpc: deconfig" 
+
+        #nota: il nostro target non ha l'utility resolvconf
+        if [ -x /sbin/resolvconf ]; then
+            /sbin/resolvconf -d "${interface}.udhcpc"
+        fi
+	
+        if ! root_is_nfs ; then
+         if [ $have_bin_ip -eq 1 ]; then
+           ip addr flush dev $interface
+           ip link set dev $interface up
+           echo "udhcpc: ip addr flush dev $interface"
+         else
+           /sbin/ifconfig $interface 0.0.0.0
+           echo "udhcpc: ifconfig interface 0.0.0.0"
+         fi
+        fi
+        ;; 
+
+    renew|bound)
+        echo "udhcpc: renew or bound"
+		#################
+		# IP address
+		if [ $have_bin_ip -eq 1 ]; then
+          ip addr add dev $interface local $ip/$mask $BROADCAST
+          echo "udhcpc: ip addr add dev $interface local $ip/$mask $BROADCAST"
+          #salvo IP corrente 
+          echo $ip > $DHCP_RESULTS
+        else
+          /sbin/ifconfig $interface $ip $BROADCAST $NETMASK
+          echo "udhcpc: $ip $BROADCAST $NETMASK"
+        fi
+
+		#################
+		# Subnet mask
+		echo "udhcpc: subnet= $subnet" 
+		#dovrebbe essere un parametro sempre presente nella risposta del server DHCP
+		if [ -n "$subnet" ] ; then
+			echo $subnet >> $DHCP_RESULTS
+    	else
+			#forzo un valore di default
+			echo "255.255.255.0" >> $DHCP_RESULTS
+       	fi
+
+		#################
+		# default gw
+		if [ -n "$router" ] ; then
+            echo "udhcpc: router= $router"
+            if ! root_is_nfs ; then
+              echo "udhcpc: del default gw"
+              if [ $have_bin_ip -eq 1 ]; then
+                while ip route del default 2>/dev/null ; do
+                :
+                done
+              else
+                while route del default gw 0.0.0.0 dev $interface 2>/dev/null ; do
+                :
+                done
+              fi
+            fi
+
+            metric=0
+            for i in $router ; do
+              if [ $have_bin_ip -eq 1 ]; then
+                ip route add default via $i metric $metric
+				echo "udhcpc: ip route add default via $i metric $metric"
+				#prendo solo il primo GW se ce se sono più di uno
+				if [ $metric -eq 0 ]; then
+					echo "prendo il primo def gw"
+            	  	echo $i >> $DHCP_RESULTS
+				fi
+              else
+                route add default gw $i dev $interface metric $metric 2>/dev/null
+				echo "udhcpc: route add default gw $i dev $interface metric $metric"
+              fi
+              metric=$(($metric + 1))
+            done
+        fi
+
+		#################
+        # Update resolver configuration file
+        R=""
+        [ -n "$domain" ] && R="domain $domain
+"
+        for i in $dns; do
+			#se ci sono più server DNS li appendo tutti nel file temporaneo 
+			#ma nella pagina di Setup visualizzo solo il primo della lista
+            echo $i >> $DHCP_RESULTS
+            R="${R}nameserver $i
+"
+            echo "udhcpc: adding DNS $i"
+        done
+
+        #nota: il nostro sistema non ha l'utility resolvconf
+        if [ -x /sbin/resolvconf ]; then
+            echo -n "$R" | /sbin/resolvconf -a "${interface}.udhcpc"
+        else
+            #imposto l'IP del DNS server che mi è stato inviato dal DHCP server
+			echo -n "$R" > "$RESOLV_CONF"  
+			echo "udhcpc: $R > $RESOLV_CONF"
+        fi  
+        ;;
+esac
+
+exit 0
+
+
+
+
+
+
+
+
+
+
+
+

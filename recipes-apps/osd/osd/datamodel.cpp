@@ -53,6 +53,8 @@ DataModel::DataModel(QObject *parent) :
     m_keyRelayOn = false;
     m_eth_enabled = false;
 	m_dimming_pot_ena = false;
+	m_debug_console = false;
+	m_saab_config = false;
 
     //nota: probabilmente non serve mettere a 1 perché all'avvio viene
     //impostato l'ingresso attivo dal micro tramite SOURCE_SET

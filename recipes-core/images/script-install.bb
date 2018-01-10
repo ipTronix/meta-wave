@@ -9,8 +9,11 @@ SRC_URI = " \
            file://S90osd \
            file://fstab \
            file://20-sd_mount.rules \
+           file://50default \
+           file://wave_cfg.txt \
            file://COPYRIGHT \
 "
+FILES_${PN} += "/opt/*"
 
 S = "${WORKDIR}"
 
@@ -23,6 +26,10 @@ do_install () {
   install -m 0755 S90osd ${D}${sysconfdir}/rc5.d
   install -d ${D}/usr/bin
   install -m 0755 strace ${D}/usr/bin
+  install -d ${D}/opt/osd
+  install -m 0644 wave_cfg.txt ${D}/opt/osd
+  install -d ${D}/etc/udhcpc.d
+  install -m 0755 50default ${D}/etc/udhcpc.d
   mkdir -p ${D}/mnt
   mkdir -p ${D}/mnt/sd
 }

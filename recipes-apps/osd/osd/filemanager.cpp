@@ -482,6 +482,8 @@ bool FileManager::loadOSDConfigFile()
 
 	m_dm->setProperty("eth_enabled", false);
 	m_dm->setProperty("dimming_pot_ena", false);
+	m_dm->setProperty("debug_console", false);
+	m_dm->setProperty("saab_config", false);
 	
     if(file->open(QFile::ReadOnly))
     {
@@ -527,10 +529,34 @@ bool FileManager::loadOSDConfigFile()
                     m_dm->setProperty("dimming_pot_ena", false);
                 }
 			}
+			else if (buff[0] == "DEBUG_CONSOLE")
+			{
+                QString cnsl = buff[1];
+                if(cnsl == "YES") {
+                    qDebug("Console enabled");
+                    m_dm->setProperty("debug_console", true);
+                }
+                else {
+                    qDebug("Console disabled");
+                    m_dm->setProperty("debug_console", false);
+                }
+			}
+			else if (buff[0] == "SAAB_CONFIG")
+			{
+                QString saab_cfg = buff[1];
+                if(saab_cfg == "YES") {
+                    qDebug("SAAB config enabled");
+                    m_dm->setProperty("saab_config", true);
+                }
+                else {
+                    qDebug("SAAB config disabled");
+                    m_dm->setProperty("saab_config", false);
+                }
+			}
         }
     }
     else {
-        qDebug("wave_cfg.txt non trovato, ETHERNET disabilitata, Potenziometro disabilitato");
+        qDebug("wave_cfg.txt non trovato, ETHERNET disabilitata, Potenziometro disabilitato, Console disabilitata");
     }
     return true;
 }
@@ -565,7 +591,7 @@ bool FileManager::loadPanelTimingsFile()
             //extract all fields
             buff = line.split(";", QString::KeepEmptyParts, Qt::CaseInsensitive);
             //devo avere 10 campi, altrimenti riga non valida
-            if(buff.count() != 11) {
+            if(buff.count() != 10) {
                 qDebug("riga non valida count=%d", buff.count());
                 continue;
             }
@@ -576,21 +602,21 @@ bool FileManager::loadPanelTimingsFile()
 //                         ;
 
             //converto da ASCII a int
-            int idx = buff[0].toInt() - 1; //1 based index
+            //int idx = buff[0].toInt() - 1; //1 based index
             //qDebug() << "inpIdx:" << idx;
 
-            //sanity check
-            if(idx <= 15) {
-                m_dm->PanelTimingsTable[idx].Width =         buff[1].toInt();
-                m_dm->PanelTimingsTable[idx].Height =		 buff[2].toInt();
-                m_dm->PanelTimingsTable[idx].H_front_porch = buff[3].toInt();
-                m_dm->PanelTimingsTable[idx].H_sync =		 buff[4].toInt();
-                m_dm->PanelTimingsTable[idx].H_back_porch =	 buff[5].toInt();
-                m_dm->PanelTimingsTable[idx].V_front_porch = buff[6].toInt();
-                m_dm->PanelTimingsTable[idx].V_sync =		 buff[7].toInt();
-                m_dm->PanelTimingsTable[idx].clock_idx =	 buff[8].toInt();
-                m_dm->PanelTimingsTable[idx].V_back_porch =	 buff[9].toInt();
+            for (int idx=0; idx<15; idx++) {
+                m_dm->PanelTimingsTable[idx].Width =         buff[0].toInt();
+                m_dm->PanelTimingsTable[idx].Height =		 buff[1].toInt();
+                m_dm->PanelTimingsTable[idx].H_front_porch = buff[2].toInt();
+                m_dm->PanelTimingsTable[idx].H_sync =		 buff[3].toInt();
+                m_dm->PanelTimingsTable[idx].H_back_porch =	 buff[4].toInt();
+                m_dm->PanelTimingsTable[idx].V_front_porch = buff[5].toInt();
+                m_dm->PanelTimingsTable[idx].V_sync =		 buff[6].toInt();
+                m_dm->PanelTimingsTable[idx].clock_idx =	 buff[7].toInt();
+                m_dm->PanelTimingsTable[idx].V_back_porch =	 buff[8].toInt();
             }
+			break;
         }
 
             //debug dump

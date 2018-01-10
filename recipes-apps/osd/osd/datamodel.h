@@ -64,6 +64,8 @@ class DataModel : public QObject
 
     bool m_eth_enabled;
 	bool m_dimming_pot_ena;
+	bool m_debug_console;
+	bool m_saab_config;
     bool m_dhcp_on;
     bool m_scom_srv;
 
@@ -146,6 +148,8 @@ public:
 
     Q_PROPERTY(bool eth_enabled        MEMBER m_eth_enabled        NOTIFY eth_enabled_Changed)
 	Q_PROPERTY(bool dimming_pot_ena    MEMBER m_dimming_pot_ena    NOTIFY dimming_pot_ena_Changed)
+    Q_PROPERTY(bool debug_console      MEMBER m_debug_console      NOTIFY debug_console_Changed)
+    Q_PROPERTY(bool saab_config        MEMBER m_saab_config        NOTIFY saab_config_Changed)
     Q_PROPERTY(bool dhcp_on            MEMBER m_dhcp_on            NOTIFY dhcp_onChanged)
     Q_PROPERTY(bool scom_srv           MEMBER m_scom_srv           NOTIFY scom_srvChanged)
 
@@ -295,6 +299,8 @@ signals:
 
     void eth_enabled_Changed(bool);
 	void dimming_pot_ena_Changed(bool);
+	void debug_console_Changed(bool);
+	void saab_config_Changed(bool);
     void dhcp_onChanged(bool);
     void scom_srvChanged(bool);
 

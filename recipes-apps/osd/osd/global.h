@@ -7,7 +7,7 @@
 #define GLOBAL_H
 
 #define SW_REL_MAJ          "1"
-#define SW_REL_MIN          "5"
+#define SW_REL_MIN          "6"
 
 //#define DEBUG_WINDOWS
 //#define DEBUG_IMX_LORENZO
@@ -16,7 +16,7 @@
 #define _IMG_PATH_WIN   "file:///C:/LAVORO/ipTRONIX/OSD_SAM_Scaler_software/SW/OSD_Desktop_SCOM/proj/img/"
 
 #define NUM_INPUTS              4
-#define OSD_TIMEOUT             8 //sec
+#define OSD_TIMEOUT             20//sec
 #define TEMPER_UPDATE_TIME      3 //sec
 
 #define MAX_OSD_BRIGHTNESS		100

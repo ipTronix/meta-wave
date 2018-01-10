@@ -1,8 +1,8 @@
-//-----------------------------------------------------------------------
-//
-// Firmware download utility
-//
-//-----------------------------------------------------------------------
+/**
+ *
+ * Firmware download utility
+ *
+ */
 #include <stdio.h>
 #include <stdint.h>
 #include <termios.h>
@@ -32,14 +32,18 @@
 #define LO_BYTE(x) (unsigned char)(x % 256)
 #define HI_BYTE(x) (unsigned char)(x / 256)
 
-enum e_dest { DEST_LPC = 50, DEST_FPGA = 51 };
+enum e_dest {
+  DEST_LPC = 50,
+  DEST_FPGA = 51
+};
 
 int           serial_fd;
 unsigned char txbuff[264];
 unsigned char rxbuff[16];
 int           chunk_num;
 
-//-----------------------------------------------------------------------
+/**
+ */
 int openSerialPort()
 {
     printf ("Opening serial: %s\n", SERIAL_PORT);
@@ -64,16 +68,16 @@ int openSerialPort()
 
     tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;     // 8-bit chars
     // disable IGNBRK for mismatched speed tests; otherwise receive break as \000 chars
-    tty.c_iflag &= ~IGNBRK;         		// disable break processing
-    tty.c_lflag = 0;                		// no signaling chars, no echo, no canonical processing
-    tty.c_oflag = 0;                		// no remapping, no delays
-    tty.c_cc[VMIN] = 0;                     // read doesn't block
-    tty.c_cc[VTIME] = 30;            		// 3 seconds read timeout
+    tty.c_iflag &= ~IGNBRK;         // disable break processing
+    tty.c_lflag = 0;                // no signaling chars, no echo, no canonical processing
+    tty.c_oflag = 0;                // no remapping, no delays
+    tty.c_cc[VMIN] = 0;             // read doesn't block
+    tty.c_cc[VTIME] = 30;           // 3 seconds read timeout
     tty.c_iflag &= ~(IXON | IXOFF | IXANY); // shut off xon/xoff ctrl
     tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP
                     | INLCR | IGNCR | ICRNL | IXON);
-    tty.c_cflag |= (CLOCAL | CREAD);		// ignore modem controls, enable reading
-    tty.c_cflag &= ~(PARENB | PARODD);		// shut off parity
+    tty.c_cflag |= (CLOCAL | CREAD);        // ignore modem controls, enable reading
+    tty.c_cflag &= ~(PARENB | PARODD);      // shut off parity
     tty.c_cflag &= ~INLCR;                  // do not convert 0x0d to 0x0a
     tty.c_cflag |= parity;
     tty.c_cflag &= ~CSTOPB;
@@ -86,15 +90,17 @@ int openSerialPort()
     return 0;
 }
 
-//-----------------------------------------------------------------------
+/**
+ */
 int send_chunk(unsigned char *chunkData, int chunkNum, int dest)
 {
     int i;
 
     //Checksum: somma a 8 bit complementata
     unsigned char chksum = 0;
-    for(i=0; i<256; i++)
+    for(i=0; i<256; i++) {
         chksum += chunkData[i];
+    }
     chksum = (unsigned char)(~chksum);
 
     //pacchetto
@@ -127,7 +133,8 @@ int send_chunk(unsigned char *chunkData, int chunkNum, int dest)
     return 0;
 }
 
-//-----------------------------------------------------------------------
+/**
+ */
 int send_reset()
 {
     unsigned char chunk[256];
@@ -135,26 +142,23 @@ int send_reset()
     return send_chunk(chunk, 0, 52);
 }
 
-
-//-----------------------------------------------------------------------
-//Attendo la conferma (ACK o NAK) da LPC
+/**
+ * Attendo la conferma (ACK o NAK) da LPC
+ */
 int get_response(unsigned char respCode)
 {
     unsigned char *ptr = rxbuff; //inizio del buffer di ricezione
     int waited = 5;     //pacchetti ACK e NAK hanno 5 bytes
     int received = 0;
 
-    while(1)
-    {
+    while(1) {
         //nota: read timeout 3 sec
         int ret = read(serial_fd, ptr, waited);
         //printf("serial read: %d\n", ret);
         if(ret < 0) {
             printf("read error %d: %s\n", errno, strerror(errno));
             return -1;
-        }
-        //timeout 3"
-        else if(ret == 0) {
+        } else if(ret == 0) { //timeout 3"
             printf("read timeout\n");
             fflush(stdout);
             return -1;
@@ -170,17 +174,14 @@ printf("\n");
         received  += ret;
         ptr       += ret;
         //arrivati 5 caratteri pacchetti ACK o NACK
-        if(received >= waited)
-        {
+        if(received >= waited) {
 #ifdef DEBUG_DUMP
             printf("Arrivati: %X %X %X %X %X \n",
                    rxbuff[0],rxbuff[1],rxbuff[2],rxbuff[3],rxbuff[4]);
 #endif
-
             //controllo se pacchetto valido e se ho un ACK
-            if(rxbuff[0] == 0xAA && rxbuff[1] == 0x55 &&
-               rxbuff[3] == 0x33 && rxbuff[4] == 0xCC)
-            {
+            if( rxbuff[0] == 0xAA && rxbuff[1] == 0x55 &&
+                rxbuff[3] == 0x33 && rxbuff[4] == 0xCC ){
                 int retCode = rxbuff[2];
                 //printf("retCode: %d\n", retCode);
                 if(retCode == respCode /*SW_UPD_ACK*/)
@@ -191,7 +192,8 @@ printf("\n");
     }
 }
 
-//-----------------------------------------------------------------------
+/**
+ */
 int sendFile(const char * filename, enum e_dest dest)
 {
     int fp;
@@ -223,10 +225,9 @@ int sendFile(const char * filename, enum e_dest dest)
             chunk_num = 0xFFFF;
             last_chunk = 1;  //fine download
             printf("-- LAST CHUNK - ");
-        }
-        else
+        } else {
             printf("-- chunk n. %d - ", chunk_num);
-
+        }
         memset(chunk_buff, 0xFF, 256);
 
         //leggo il chunk dal file
@@ -242,14 +243,11 @@ int sendFile(const char * filename, enum e_dest dest)
 
 #ifndef DEBUG_MODE
         int numRetry = 3;
-        while(1)
-        {
+        while(1) {
             send_chunk(chunk_buff, chunk_num, dest);
 
             //attendo ACK
-//printf("attendo ACK\n");
             ret = get_response(SW_UPD_ACK);
-//printf("get_response return %d\n", ret);
             if(ret < 0) {
                 if(--numRetry == 0) {
                     printf("-- File transfer error - aborted\n");
@@ -274,7 +272,8 @@ int sendFile(const char * filename, enum e_dest dest)
     return 0;
 }
 
-//-----------------------------------------------------------------------
+/**
+ */
 int forceBooloaderMode()
 {
     //pacchetto
@@ -295,7 +294,8 @@ int forceBooloaderMode()
     return 0;
 }
 
-//-----------------------------------------------------------------------
+/**
+ */
 int waitBootloaderMode(void)
 {
     int numRetry = 3;
@@ -322,8 +322,8 @@ int waitBootloaderMode(void)
     return -1;
 }
 
-
-//-----------------------------------------------------------------------
+/**
+ */
 unsigned long version_get()
 {
   unsigned long version = -1;
@@ -357,25 +357,33 @@ unsigned long version_get()
   return version;
 }
 
-//-----------------------------------------------------------------------
-int main(void)
+/**
+ */
+int main(int argc, char** argv)
 {
     unsigned long version;
-    int ret;
+    int   ret;
+    char *fpga_bin;
+    char *lpc_bin;
 
     printf("\n-----------------------------\n"
              " Firmware download utility\n"
              "-----------------------------\n");
     printf("Compiled: "__DATE__ " " __TIME__ "\n\n");
 
-/*
- divide il file /recovery/image estrae update.iso e la monta in /mnt/iso
-    ret = imageGet();
-    if(ret){
-        printf("image get FAIL\n");
-        return -1;
+    if(argc==3){
+      fpga_bin = argv[1];
+      lpc_bin  = argv[2];
+    } else {
+      fpga_bin = FPGA_SW_UPDATE_FILE;
+      lpc_bin  = ARM_SW_UPDATE_FILE;
     }
- */
+    printf("Upgrade file:\n"
+           "  FPGA: %s\n"
+           "  LPC : %s\n",
+           fpga_bin,
+           lpc_bin);
+
     version = version_get();
     printf("Upgrade version: %08X\n", version);
 
@@ -389,10 +397,10 @@ int main(void)
 
     printf("Wait for LPC bootloader mode\n");
     ret = waitBootloaderMode();
-    if(ret < 0){
+    if(ret < 0) {
         goto err;
     //ho chiuso la seriale, la riapro per proseguire la comunicazione
-    }else if(ret == 1) {
+    } else if(ret == 1) {
         sleep(2);
         printf("riapro la porta comm\n");
         fflush(stdout);
@@ -402,17 +410,22 @@ int main(void)
             return -1;
         }
         ret = waitBootloaderMode();
-        if(ret != 0)
+        if(ret != 0) {
             goto err;
+        }
     }
 
     printf("Upgrade FPGA\n");
-    ret = sendFile(FPGA_SW_UPDATE_FILE, DEST_FPGA);
-    if(ret < 0) goto err;
+    ret = sendFile(fpga_bin, DEST_FPGA);
+    if(ret < 0) {
+      goto err;
+    }
 
     printf("Upgrade LPC\n");
-    ret = sendFile(ARM_SW_UPDATE_FILE, DEST_LPC);
-    if(ret < 0) goto err;
+    ret = sendFile(lpc_bin, DEST_LPC);
+    if(ret < 0) {
+      goto err;
+    }
 
     /* aggiornamento file versione */
     printf("Update Version file\n");
@@ -437,7 +450,7 @@ int main(void)
       printf("Sync\n");
       sync();
       sleep(2);
-    }else{
+    } else {
       printf("Mount /mnt/p1 failed\n");
     }
 

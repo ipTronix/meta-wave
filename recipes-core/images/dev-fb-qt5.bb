@@ -67,6 +67,7 @@ IMAGE_INSTALL_append = " binutils libgcc libstdc++ \
     packagegroup-fsl-tools-gpu-external \
     packagegroup-fsl-tools-testapps \
     packagegroup-fsl-tools-benchmark \
+    fwupg \
     osd \
     script-install \
     "
