@@ -264,6 +264,7 @@ int SerialProtocol::Cmd_COMMAND(int cmdID)
 #define POTENTIOMETER_FLAG	0x02
 #define DEBUG_CONSOLE_FLAG	0x04
 #define SAAB_CFG_FLAG		0x08
+#define SAAB_SCALE_FLAG		0x10
 
 //-------------------------------------------------------------------------
 int SerialProtocol::Cmd_OSD_READY()
@@ -283,6 +284,7 @@ int SerialProtocol::Cmd_OSD_READY()
     txbuff[4] |= (m_dm->property("dimming_pot_ena").toBool())? POTENTIOMETER_FLAG : 0;
     txbuff[4] |= (m_dm->property("debug_console").toBool())? DEBUG_CONSOLE_FLAG : 0;
     txbuff[4] |= (m_dm->property("saab_config").toBool())? SAAB_CFG_FLAG : 0;
+    txbuff[4] |= (m_dm->property("saab_pot_scale").toBool())? SAAB_SCALE_FLAG : 0;
     txbuff[5] = LO(m_dm->tabs_crc16);
     txbuff[6] = HI(m_dm->tabs_crc16);
     txbuff[7] = 0x33;               //tail

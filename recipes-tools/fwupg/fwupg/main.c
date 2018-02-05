@@ -359,6 +359,31 @@ unsigned long version_get()
 
 /**
  */
+int infoGet(void)
+{
+/*
+  FILE   *stream;
+  char    line   [256];
+
+  if( (stream=fopen("/usr/fw/fw_info", "r+"))==NULL ){
+    return -1;
+  }
+  fseek(stream, 0, SEEK_SET);
+
+  while( fgets(line, sizeof(line)-1, stream)!=NULL ){
+    if( !memcmp(line, "ver_fpga ", 9)){
+      fpga_v = line+9
+    }else
+    if( !memcmp(line, "ver_lpc ", 8)){
+      lpc_v = line+8
+    }
+  }
+*/
+  return 0;
+}
+
+/**
+ */
 int main(int argc, char** argv)
 {
     unsigned long version;

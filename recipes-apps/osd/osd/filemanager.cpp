@@ -484,6 +484,7 @@ bool FileManager::loadOSDConfigFile()
 	m_dm->setProperty("dimming_pot_ena", false);
 	m_dm->setProperty("debug_console", false);
 	m_dm->setProperty("saab_config", false);
+	m_dm->setProperty("saab_pot_scale", false);
 	
     if(file->open(QFile::ReadOnly))
     {
@@ -551,6 +552,18 @@ bool FileManager::loadOSDConfigFile()
                 else {
                     qDebug("SAAB config disabled");
                     m_dm->setProperty("saab_config", false);
+                }
+			}
+			else if (buff[0] == "SAAB_POT_SCALE")
+			{
+                QString saab_scale = buff[1];
+                if(saab_scale == "YES") {
+                    qDebug("SAAB pot scale enabled");
+                    m_dm->setProperty("saab_pot_scale", true);
+                }
+                else {
+                    qDebug("SAAB pot scale disabled");
+                    m_dm->setProperty("saab_pot_scale", false);
                 }
 			}
         }
