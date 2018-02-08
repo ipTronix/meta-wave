@@ -464,17 +464,33 @@ Rectangle {
             }
         }
 
-////------------------------------------
-//// Versione SW OSD [PROVVISORIO]
-////------------------------------------
-//Text {
-//    id: swVer
-//    x: 4; y: 65;
-//    color: "red"
-//    font { family: "Myriad Pro"; pixelSize: 12 }
-//    text: "SW REL: "+ OSD_SW_REV_MAJ + "." + OSD_SW_REV_MIN
-//}
+		//------------------------------------
+		// Versione SW OSD [PROVVISORIO]
+		//------------------------------------
+		//Text {
+		//	id: swVer
+		//	x: 4; y: 65;
+		//	color: "red"
+		//	font { family: "Myriad Pro"; pixelSize: 12 }
+		//	text: "OSD  v"+ OSD_SW_REV_MAJ + "." + OSD_SW_REV_MIN
+		//}
 
+		//Text {
+		//	id: swLPCVer
+		//	x: 4; y: 81;
+		//	color: "black"
+		//	font { family: "Myriad Pro"; pixelSize: 12 }
+		//	text: "LPC  v" + "1" + "." + "0"
+		//}
+
+		//Text {
+		//	id: swFPGAVer
+		//	x: 4; y: 97;
+		//	color: "black"
+		//	font { family: "Myriad Pro"; pixelSize: 12 }
+		//	text: "FPGA v" + "2" + "." + "7"
+		//}
+		
         //-----------------------------------------------------
         // Footer bar
         //-----------------------------------------------------

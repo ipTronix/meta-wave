@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 
     sp->RegisterDm(data_model);
     sp->RegisterQMLlauncher(launcher);
+	sp->RegisterFm(file_manager);
 
     sp->moveToThread(commThread);
     QObject::connect(commThread, SIGNAL(started()), sp, SLOT(runLoop()));

@@ -27,6 +27,7 @@ void FileManager::LoadFiles()
     LoadMonitorinfoFile();
     loadPanelTimingsFile();
     loadOSDConfigFile();
+	loadSWVersionsFile();
 
     //data loaded, send OSD_READY
     m_dm->sendOSD_READY = true;
@@ -481,7 +482,7 @@ bool FileManager::loadOSDConfigFile()
 	}
 
 	m_dm->setProperty("eth_enabled", false);
-	m_dm->setProperty("dimming_pot_ena", false);
+	//m_dm->setProperty("dimming_pot_ena", false);
 	m_dm->setProperty("debug_console", false);
 	m_dm->setProperty("saab_config", false);
 	m_dm->setProperty("saab_pot_scale", false);
@@ -518,6 +519,7 @@ bool FileManager::loadOSDConfigFile()
                     m_dm->setProperty("eth_enabled", false);
                 }
             }
+/*			
 			else if (buff[0] == "DIMMING_POT")
 			{
                 QString pot = buff[1];
@@ -530,6 +532,7 @@ bool FileManager::loadOSDConfigFile()
                     m_dm->setProperty("dimming_pot_ena", false);
                 }
 			}
+*/			
 			else if (buff[0] == "DEBUG_CONSOLE")
 			{
                 QString cnsl = buff[1];
@@ -572,6 +575,63 @@ bool FileManager::loadOSDConfigFile()
         qDebug("wave_cfg.txt non trovato, ETHERNET disabilitata, Potenziometro disabilitato, Console disabilitata");
     }
     return true;
+}
+
+void FileManager::loadSWVersionsFile()
+{
+    PRINT_FUNC_NAME
+
+    QString line;
+    QStringList buff;
+	
+    QFile file_ver(VERSION_FILE_PATH "fw_info.txt");
+	
+    if(!file_ver.exists())
+	{
+		qDebug("fw_info.txt file does not exist");
+		return;
+	}
+	
+    if(file_ver.open(QFile::ReadOnly))
+    {
+        QTextStream in(&file_ver);
+
+        while(!in.atEnd())
+        {
+            line = in.readLine();
+            qDebug() << "readLine";
+            //salto righe di commento e righe vuote
+            if(line.startsWith("#") || line == "") {
+                continue;
+            }
+            //separate parameter name from value
+            buff = line.split("=", QString::KeepEmptyParts, Qt::CaseInsensitive);
+            //devo avere 2 campi, altrimenti riga non valida
+            if(buff.count() != 2) {
+                //qDebug("riga non valida");
+                continue;
+            }
+
+            if(buff[0] == "OSD")
+            {
+                osd_ver = buff[1];
+				qDebug() << osd_ver;
+            }
+			else if (buff[0] == "LPC")
+			{
+                lpc_ver = buff[1];
+				qDebug() << lpc_ver;
+			}
+			else if (buff[0] == "FPGA")
+			{
+                fpga_ver = buff[1];
+				qDebug() << fpga_ver;
+			}
+        }
+    }
+    else {
+        qDebug("fw_info.txt error");
+    }
 }
 
 //------------------------------------------------------

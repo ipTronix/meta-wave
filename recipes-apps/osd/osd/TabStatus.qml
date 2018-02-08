@@ -11,6 +11,9 @@ Item {
     width: 480; height: 320
 
     property int currT: 0
+	property bool osd_ver_ok: data_model.OSD_SW_Ver_OK
+	property bool lpc_ver_ok: data_model.LPC_SW_Ver_OK
+	property bool fpga_ver_ok: data_model.FPGA_SW_Ver_OK
 
     Component.onCompleted: {
         console.log("-- TabStatus")
@@ -144,7 +147,32 @@ Item {
         }
 
         //empty item - used for spacing
-        Item { width: 300; height: 20 }
+        //Item { width: 300; height: 20 }
+        //-----------------------------
+        // SW Versions
+        //-----------------------------
+        Item {
+            width: 300; height: 20
+            id: rw_swver
+            
+            Text {
+                anchors { verticalCenter: rw_swver.verticalCenter; left: rw_swver.left }
+                color: (osd_ver_ok)? color_HeavyDark : "red"; font { family: "Myriad Pro"; pixelSize: 16 }
+                text: "OSD v"+ OSD_SW_REV_MAJ + "." + OSD_SW_REV_MIN
+            }
+			
+            Text {
+                anchors { verticalCenter: rw_swver.verticalCenter; left: rw_swver.left; leftMargin: 100}
+                color: (lpc_ver_ok)? color_HeavyDark : "red"; font { family: "Myriad Pro"; pixelSize: 16 }
+                text: "LPC v"+ LPC_SW_REV_MAJ + "." + LPC_SW_REV_MIN
+            }
+			
+            Text {
+                anchors { verticalCenter: rw_swver.verticalCenter; left: rw_swver.left; leftMargin: 200}
+                color: (fpga_ver_ok)? color_HeavyDark : "red"; font { family: "Myriad Pro"; pixelSize: 16 }
+                text: "FPGA v"+ FPGA_SW_REV_MAJ + "." + FPGA_SW_REV_MIN
+            }
+        }
 
         //-----------------------------
         // Run time

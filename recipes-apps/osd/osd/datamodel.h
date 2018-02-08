@@ -69,6 +69,10 @@ class DataModel : public QObject
 	bool m_saab_pot_scale;
     bool m_dhcp_on;
     bool m_scom_srv;
+	bool m_OSD_SW_Ver_OK;
+	bool m_LPC_SW_Ver_OK;
+	bool m_FPGA_SW_Ver_OK;
+	
 
     //nota gli IP sono rappresentati con 4 interi separati
     //perché in QML non si riesce ad editare oggetti aggregati
@@ -154,7 +158,10 @@ public:
     Q_PROPERTY(bool saab_pot_scale     MEMBER m_saab_pot_scale     NOTIFY saab_pot_scale_Changed)
     Q_PROPERTY(bool dhcp_on            MEMBER m_dhcp_on            NOTIFY dhcp_onChanged)
     Q_PROPERTY(bool scom_srv           MEMBER m_scom_srv           NOTIFY scom_srvChanged)
-
+    Q_PROPERTY(bool OSD_SW_Ver_OK      MEMBER m_OSD_SW_Ver_OK      NOTIFY OSD_SW_Ver_OK_Changed)
+    Q_PROPERTY(bool LPC_SW_Ver_OK      MEMBER m_LPC_SW_Ver_OK      NOTIFY LPC_SW_Ver_OK_Changed)
+    Q_PROPERTY(bool FPGA_SW_Ver_OK     MEMBER m_FPGA_SW_Ver_OK     NOTIFY FPGA_SW_Ver_OK_Changed)
+	
     Q_PROPERTY(int ipAddr0             MEMBER m_ipAddr0            NOTIFY ipAddr0Changed)
     Q_PROPERTY(int ipAddr1             MEMBER m_ipAddr1            NOTIFY ipAddr1Changed)
     Q_PROPERTY(int ipAddr2             MEMBER m_ipAddr2            NOTIFY ipAddr2Changed)
@@ -306,6 +313,9 @@ signals:
 	void saab_pot_scale_Changed(bool);
     void dhcp_onChanged(bool);
     void scom_srvChanged(bool);
+	void OSD_SW_Ver_OK_Changed(bool);
+	void LPC_SW_Ver_OK_Changed(bool);
+	void FPGA_SW_Ver_OK_Changed(bool);
 
     void closeOSD();
 

@@ -261,7 +261,7 @@ int SerialProtocol::Cmd_COMMAND(int cmdID)
 }
 
 #define ETHERNET_FLAG		0x01
-#define POTENTIOMETER_FLAG	0x02
+#define UNUSED_FLAG			0x02
 #define DEBUG_CONSOLE_FLAG	0x04
 #define SAAB_CFG_FLAG		0x08
 #define SAAB_SCALE_FLAG		0x10
@@ -281,7 +281,7 @@ int SerialProtocol::Cmd_OSD_READY()
     txbuff[3] = m_dm->property("logo_present").toInt();
 	txbuff[4] = 0;
     txbuff[4] |= (m_dm->property("eth_enabled").toBool())? ETHERNET_FLAG : 0;
-    txbuff[4] |= (m_dm->property("dimming_pot_ena").toBool())? POTENTIOMETER_FLAG : 0;
+    //txbuff[4] |= (m_dm->property("dimming_pot_ena").toBool())? UNUSED_FLAG : 0;
     txbuff[4] |= (m_dm->property("debug_console").toBool())? DEBUG_CONSOLE_FLAG : 0;
     txbuff[4] |= (m_dm->property("saab_config").toBool())? SAAB_CFG_FLAG : 0;
     txbuff[4] |= (m_dm->property("saab_pot_scale").toBool())? SAAB_SCALE_FLAG : 0;
@@ -743,6 +743,10 @@ int SerialProtocol::parse_in_serial_frame()
                 case osdLOCK_PIN:
                     m_dm->setProperty("lockPIN", val);
                     break;
+					
+				case osdPOT_ENA_SER:
+					m_dm->setProperty("dimming_pot_ena", val);
+					break;
 
                  default:
                     //invalida il flag se parametro non valido
@@ -885,22 +889,40 @@ int SerialProtocol::parse_in_serial_frame()
                 m_dm->setProperty("inputs1Disable", false);
 
             int LPC_sw_rel[4];
-            LPC_sw_rel[0] = frame_buff[2];
-            LPC_sw_rel[1] = frame_buff[3];
-            LPC_sw_rel[2] = frame_buff[4];
-            LPC_sw_rel[3] = frame_buff[5];
+            LPC_sw_rel[0] = frame_buff[2];		
+            LPC_sw_rel[1] = frame_buff[3];		
+            LPC_sw_rel[2] = frame_buff[4];		
+            LPC_sw_rel[3] = frame_buff[5];		
 
             int FPGA_sw_rel[4];
-            FPGA_sw_rel[0] = frame_buff[6];
-            FPGA_sw_rel[1] = frame_buff[7];
-            FPGA_sw_rel[2] = frame_buff[8];
-            FPGA_sw_rel[3] = frame_buff[9];
+            FPGA_sw_rel[0] = frame_buff[6];		
+            FPGA_sw_rel[1] = frame_buff[7];		
+            FPGA_sw_rel[2] = frame_buff[8];		
+            FPGA_sw_rel[3] = frame_buff[9];		
 
             qDebug("LPC_sw_rel: %d.%d.%d.%d FPGA_sw_rel: %d.%d.%d.%d",
                    LPC_sw_rel[0],  LPC_sw_rel[1],  LPC_sw_rel[2],  LPC_sw_rel[3],
                    FPGA_sw_rel[0], FPGA_sw_rel[1], FPGA_sw_rel[2], FPGA_sw_rel[3]
                   );
-
+			
+			QString lpc_maj_ver = QString::number(((((unsigned int)LPC_sw_rel[0]) << 8) | LPC_sw_rel[1]));
+			QString lpc_min_ver = QString::number(((((unsigned int)LPC_sw_rel[2]) << 8) | LPC_sw_rel[3]));
+			QString fpga_maj_ver = QString::number(((((unsigned int)FPGA_sw_rel[0]) << 8) | FPGA_sw_rel[1]));
+			QString fpga_min_ver = QString::number(((((unsigned int)FPGA_sw_rel[2]) << 8) | FPGA_sw_rel[3]));
+			
+			m_ql->getEngine()->rootContext()->setContextProperty("LPC_SW_REV_MAJ", lpc_maj_ver);
+			m_ql->getEngine()->rootContext()->setContextProperty("LPC_SW_REV_MIN", lpc_min_ver);
+			m_ql->getEngine()->rootContext()->setContextProperty("FPGA_SW_REV_MAJ", fpga_maj_ver);
+			m_ql->getEngine()->rootContext()->setContextProperty("FPGA_SW_REV_MIN", fpga_min_ver);
+			
+			QString osd_str_ver = QString(SW_REL_MAJ) + "." + QString(SW_REL_MIN);
+			QString lpc_str_ver = lpc_maj_ver + "." + lpc_min_ver;
+			QString fpga_str_ver = fpga_maj_ver + "." + fpga_min_ver;
+			
+			m_dm->setProperty("OSD_SW_Ver_OK", (osd_str_ver.compare(m_fm->osd_ver) == 0));
+			m_dm->setProperty("LPC_SW_Ver_OK", (lpc_str_ver.compare(m_fm->lpc_ver) == 0));
+			m_dm->setProperty("FPGA_SW_Ver_OK", (fpga_str_ver.compare(m_fm->fpga_ver) == 0));
+			
             //inizializza il motore grafico
             //e abilita il mouse per richiamare l'OSD a video
             //nota: va fatto oneshoot all'avvio (comando che arriva da LPC)
@@ -933,7 +955,7 @@ bool SerialProtocol::parseBuffer()
     //search for the first occurrence of the header word
     char *pFrameStart = (char *)memmem(rxbuff, numB, "\xAA\x55", 2);
     if(pFrameStart == 0) {
-        qDebug("no header yet\n");
+        //qDebug("no header yet\n");
         return false;
     }
 
@@ -981,10 +1003,10 @@ bool SerialProtocol::parseBuffer()
     memset(rxbuff + remB, 0, sizeof(rxbuff) - remB); //azzero il rimanente
     pHead = rxbuff + remB;
 
-                        qDebug("\n*** Complete frame extracted ***");
-                        for(int i=0; i<frameSize; i++)
-                            qDebug("    0x%02X", frame_buff[i]);
-                        qDebug(" ");
+                        //qDebug("\n*** Complete frame extracted ***");
+                        //for(int i=0; i<frameSize; i++)
+                        //    qDebug("    0x%02X", frame_buff[i]);
+                        //qDebug(" ");
 
     parse_in_serial_frame();
 #endif
@@ -1025,8 +1047,8 @@ bool SerialProtocol::runLoop()
         ssize_t rc = read(serial_fd, pHead, 25); //nota: 25 un numero qualunque
         //ricevuto dei caratteri
         if(rc > 0) {
-            qDebug() << "read rc:" << rc;
-            for(int i=0; i<rc; i++) qDebug("  %d: 0x%02X", i, pHead[i]);
+            //qDebug() << "read rc:" << rc;
+            //for(int i=0; i<rc; i++) qDebug("  %d: 0x%02X", i, pHead[i]);
             pHead += rc;
 
             while(parseBuffer());

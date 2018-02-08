@@ -20,6 +20,8 @@
 #define LOGO_FILE_PATH  "/mnt/sd/"
 #endif
 
+#define VERSION_FILE_PATH	"/zzz/"
+
 //EDID files sulla SDCard
 #define EDID_FILE0    CONFIG_PATH "edid-dvi-d1.txt"
 #define EDID_FILE1    CONFIG_PATH "edid-dp1.txt"
@@ -55,6 +57,9 @@ public:
     explicit FileManager(QObject *parent = 0);
     void LoadFiles();
     void RegisterDm(DataModel *dmodel) { m_dm = dmodel; }
+	QString osd_ver;
+	QString lpc_ver;
+	QString fpga_ver;
 
 signals:
 
@@ -67,6 +72,7 @@ public slots:
     bool loadPanelTimingsFile();
     bool loadOSDConfigFile();
     void checkLogoIsPresent();
+	void loadSWVersionsFile();
 };
 
 #endif // FILEMANAGER_H

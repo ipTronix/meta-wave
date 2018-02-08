@@ -14,6 +14,7 @@
 #include "temp_monitor.h"
 #include "datamodel.h"
 #include "qml_launcher.h"
+#include "filemanager.h"
 
 class DataModel;
 class TempMonitor;
@@ -66,6 +67,7 @@ class SerialProtocol : public QObject
     DataModel    *m_dm;
     TempMonitor  *m_tm;
     QML_Launcher *m_ql;
+    FileManager *m_fm;
 
     char txbuff[256];
 
@@ -94,6 +96,7 @@ public:
     void RegisterDm(DataModel *dmodel) { m_dm = dmodel; }
     void RegisterTm(TempMonitor *tmon) { m_tm = tmon; }
     void RegisterQMLlauncher(QML_Launcher *ql) { m_ql = ql; }
+	void RegisterFm(FileManager *fmanager) { m_fm = fmanager; }
     bool setPacketWaited;
 
 signals:

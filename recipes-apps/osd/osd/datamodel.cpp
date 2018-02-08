@@ -56,6 +56,9 @@ DataModel::DataModel(QObject *parent) :
 	m_debug_console = false;
 	m_saab_config = false;
 	m_saab_pot_scale = false;
+	m_OSD_SW_Ver_OK = false;
+	m_LPC_SW_Ver_OK = false;
+	m_FPGA_SW_Ver_OK = false;
 
     //nota: probabilmente non serve mettere a 1 perché all'avvio viene
     //impostato l'ingresso attivo dal micro tramite SOURCE_SET

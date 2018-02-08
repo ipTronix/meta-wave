@@ -7,7 +7,7 @@
 #define GLOBAL_H
 
 #define SW_REL_MAJ          "1"
-#define SW_REL_MIN          "6"
+#define SW_REL_MIN          "7"
 
 //#define DEBUG_WINDOWS
 //#define DEBUG_IMX_LORENZO

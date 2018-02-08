@@ -25,7 +25,7 @@ Item {
         onKey_enter: {
             main.tabEditActive = true
             if(popPIN.visible === false) {
-                if(currElement < 5)
+                if(currElement < 6)
                     currElement++
                 else
                     currElement = 0
@@ -49,39 +49,44 @@ Item {
                     data_model.updateSetting(Glob.osdBRIGHTNESS, data_model.dimLevel)
                 }
                 break;
+				
+			case 1:
+				data_model.dimming_pot_ena = true
+				data_model.updateSetting(Glob.osdPOT_ENA, true)
+				break;
 
-            case 1:
+            case 2:
                 if(data_model.contrastLevel < 100) {
                     data_model.contrastLevel++
                     data_model.updateSetting(Glob.osdCONTRAST, data_model.contrastLevel)
                 }
                 break;
 
-            case 2:
+            case 3:
                 if(data_model.buzzerVol < 100) {
                     data_model.buzzerVol++
                     data_model.updateSetting(Glob.osdBUZZER, data_model.buzzerVol)
                 }
                 break;
 
-            case 3:
+            case 4:
                 if(data_model.scalingMode < 2) {
                     data_model.scalingMode++
-                    data_model.updateSetting(Glob.osdBUZZER, data_model.scalingMode)
-                }
-                break;
-
-            case 4:
-                if(data_model.inputMode < 1) {
-                    data_model.inputMode++
-                    data_model.updateSetting(Glob.osdBUZZER, data_model.inputMode)
+					data_model.updateSetting(Glob.osdSCALING_MODE, data_model.scalingMode)
                 }
                 break;
 
             case 5:
+                if(data_model.inputMode < 1) {
+                    data_model.inputMode++
+					data_model.updateSourceSettings()
+                }
+                break;
+
+            case 6:
                 if(data_model.ddc_ci_Mode < 2) {
                     data_model.ddc_ci_Mode++
-                    data_model.updateSetting(Glob.osdBUZZER, data_model.ddc_ci_Mode)
+					data_model.updateSourceSettings()
                 }
                 break;
             }
@@ -101,38 +106,43 @@ Item {
                 }
                 break;
 
-            case 1:
+			case 1:
+				data_model.dimming_pot_ena = false
+				data_model.updateSetting(Glob.osdPOT_ENA, false)
+				break;
+				
+            case 2:
                 if(data_model.contrastLevel) {
                     data_model.contrastLevel--
                     data_model.updateSetting(Glob.osdCONTRAST, data_model.contrastLevel)
                 }
                 break;
 
-            case 2:
+            case 3:
                 if(data_model.buzzerVol) {
                     data_model.buzzerVol--
                     data_model.updateSetting(Glob.osdBUZZER, data_model.buzzerVol)
                 }
                 break;
 
-            case 3:
+            case 4:
                 if(data_model.scalingMode) {
                     data_model.scalingMode--
-                    data_model.updateSetting(Glob.osdBUZZER, data_model.scalingMode)
-                }
-                break;
-
-            case 4:
-                if(data_model.inputMode) {
-                    data_model.inputMode--
-                    data_model.updateSetting(Glob.osdBUZZER, data_model.inputMode)
+					data_model.updateSetting(Glob.osdSCALING_MODE, data_model.scalingMode)
                 }
                 break;
 
             case 5:
+                if(data_model.inputMode) {
+                    data_model.inputMode--
+					data_model.updateSourceSettings()
+                }
+                break;
+
+            case 6:
                 if(data_model.ddc_ci_Mode) {
                     data_model.ddc_ci_Mode--
-                    data_model.updateSetting(Glob.osdBUZZER, data_model.ddc_ci_Mode)
+					data_model.updateSourceSettings()
                 }
                 break;
 
@@ -155,7 +165,7 @@ Item {
     // Controlli
     //---------------------------------------------------------------------------
     Column {
-        x: 90; y: 15; spacing: 1
+        x: 90; y: 14; spacing: 1
 
         //--------------- Row 1: "Dimming" ----------------
         Item {
@@ -205,18 +215,60 @@ Item {
                     data_model.dimLevel = percVal
                     data_model.updateSetting(Glob.osdBRIGHTNESS, percVal)
                     resOsdTout()
+					}
+				}
+			}			
+        }
+		
+        //--------------- Row 2: "Potentiometer enable" ----------------
+		Item {
+			width: 390; height: 40 
+            Rectangle {
+                id: backg_pot
+                anchors.fill: parent
+                visible:  currElement === 1
+                color: color_HighlightBackgd
+            }
+            //"Potentiometer enable" label
+            Text {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    left: parent.left; leftMargin: 5
                 }
-             }
-        }
-        }
+                color: color_HeavyDark
+                font { family: "Myriad Pro"; weight: Font.Bold; pixelSize: 14 }
+                text: qsTr("Potentiometer enable")
+            }
+            MouseArea {
+                anchors.fill: backg_pot
+                hoverEnabled: main.tabEditActive === false
+                onEntered: currElement = 1  //backg2.visible = true
+                onExited:  currElement = -1  //backg2.visible = false
+                onClicked: resOsdTout()
+            }
+			OsdCheckBox {
+				id: pot_chkbox
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    left: parent.left; leftMargin: 160
+                }
+				value: data_model.dimming_pot_ena
+				onBoxClicked: {
+					data_model.dimming_pot_ena = !data_model.dimming_pot_ena
+					data_model.updateSetting(Glob.osdPOT_ENA, data_model.dimming_pot_ena)
+					resOsdTout()
+				}
+			}
+			
+		}
 
-        //--------------- Row 2: "Contrast" ----------------
+        //--------------- Row 3: "Contrast" ----------------
         Item {
             width: 390; height: 40
             Rectangle {
                 id: backg2
                 anchors.fill: parent
-                visible:  currElement === 1
+                visible:  currElement === 2
                 color: color_HighlightBackgd
             }
             //"Contrast" label
@@ -232,7 +284,7 @@ Item {
             MouseArea {
                 anchors.fill: backg2
                 hoverEnabled: main.tabEditActive === false
-                onEntered: currElement = 1  //backg2.visible = true
+                onEntered: currElement = 2  //backg2.visible = true
                 onExited:  currElement = -1  //backg2.visible = false
                 onClicked: resOsdTout()
             }
@@ -251,13 +303,13 @@ Item {
             }
         }
 
-        //--------------- Row 3: "Buzzer vol." ----------------
+        //--------------- Row 4: "Buzzer vol." ----------------
         Item {
             width: 390; height: 40
             Rectangle {
                 id: backg3
                 anchors.fill: parent
-                visible:  currElement === 2
+                visible:  currElement === 3
                 color: color_HighlightBackgd
             }
             //"Buzzer vol." label
@@ -273,7 +325,7 @@ Item {
             MouseArea {
                 anchors.fill: backg3
                 hoverEnabled: main.tabEditActive === false
-                onEntered: currElement = 2  //backg3.visible = true
+                onEntered: currElement = 3  //backg3.visible = true
                 onExited:  currElement = -1  //backg3.visible = false
                 onClicked: resOsdTout()
             }
@@ -293,9 +345,9 @@ Item {
         }
 
         //------- Spacer -------
-        Item { width: 390; height: 12 }
+        //Item { width: 390; height: 12 }
 
-        //--------------- Row 4: "Scaling" ----------------
+        //--------------- Row 5: "Scaling" ----------------
         Item {
             width: 390; height: 40
 
@@ -307,7 +359,7 @@ Item {
             Rectangle {
                 id: backg4
                 anchors.fill: parent
-                visible: currElement === 3
+                visible: currElement === 4
                 color: color_HighlightBackgd
             }
             //"Scaling" label
@@ -323,7 +375,7 @@ Item {
             MouseArea {
                 anchors.fill: backg4
                 hoverEnabled: main.tabEditActive === false
-                onEntered: currElement = 3  // backg4.visible = true
+                onEntered: currElement = 4  // backg4.visible = true
                 onExited:  currElement = -1 // backg4.visible = false
                 onClicked: resOsdTout()
             }
@@ -345,7 +397,7 @@ Item {
             }
         }
 
-        //--------------- Row 5: "Input mode" ----------------
+        //--------------- Row 6: "Input mode" ----------------
         Item {
             width: 390; height: 40
 
@@ -355,7 +407,7 @@ Item {
             Rectangle {
                 id: backg5
                 anchors.fill: parent
-                visible: currElement === 4
+                visible: currElement === 5
                 color: color_HighlightBackgd
             }
             //"Input mode" label
@@ -371,7 +423,7 @@ Item {
             MouseArea {
                 anchors.fill: backg5
                 hoverEnabled: main.tabEditActive === false
-                onEntered: currElement = 4  // backg5.visible = true
+                onEntered: currElement = 5  // backg5.visible = true
                 onExited:  currElement = -1 // backg5.visible = false
                 onClicked: resOsdTout()
             }
@@ -389,7 +441,7 @@ Item {
             }
         }
 
-        //--------------- Row 6: "DDC/CI" mode ----------------
+        //--------------- Row 7: "DDC/CI" mode ----------------
         Item {
             width: 390; height: 40
 
@@ -399,7 +451,7 @@ Item {
             Rectangle {
                 id: backg6
                 anchors.fill: parent
-                visible: currElement === 5
+                visible: currElement === 6
                 color: color_HighlightBackgd
             }
             //"DDC/CI" label
@@ -415,7 +467,7 @@ Item {
             MouseArea {
                 anchors.fill: backg6
                 hoverEnabled: main.tabEditActive === false
-                onEntered: currElement = 5 //backg6.visible = true
+                onEntered: currElement = 6 //backg6.visible = true
                 onExited:  currElement = -1//backg6.visible = false
                 onClicked: resOsdTout()
             }
@@ -431,12 +483,12 @@ Item {
                 }
             }
         }
-        Item {
-            width: 390; height: 40
-
-            //separation line
-            Rectangle { y: -1; width: 390; height: 1; color: color_HeavyDark }
-        }
+        //Item {
+        //    width: 390; height: 40
+        //
+        //    //separation line
+        //    Rectangle { y: -1; width: 390; height: 1; color: color_HeavyDark }
+        //}
     }
 
     //------------------------------------

@@ -24,7 +24,7 @@ enum e_params {
     osdMULTI_DIM     = 13,
     osdLOCK_ON_SER   = 14,
     osdLOCK_PIN      = 15,
-
+	osdPOT_ENA_SER	 = 16,
     osdINVALID
 };
 

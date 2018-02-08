@@ -18,6 +18,7 @@ var osdJ24_CFG	     = 12
 var osdMULTI_DIM     = 13
 var osdLOCK_ON       = 14
 var osdLOCK_PIN      = 15
+var osdPOT_ENA		 = 16
 
 var ddciMAN  = 0
 var ddciAUTO = 1
