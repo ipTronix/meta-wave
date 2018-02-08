@@ -6,14 +6,14 @@ Index: git/boards.cfg
  Active  arm         armv7          mx6         boundary        nitrogen6x          nitrogen6s                           nitrogen6x:IMX_CONFIG=board/boundary/nitrogen6x/nitrogen6s.cfg,MX6S,DDR_MB=512                                                    Eric Nelson <eric.nelson@boundarydevices.com>
  Active  arm         armv7          mx6         boundary        nitrogen6x          nitrogen6s1g                         nitrogen6x:IMX_CONFIG=board/boundary/nitrogen6x/nitrogen6s1g.cfg,MX6S,DDR_MB=1024                                                 Eric Nelson <eric.nelson@boundarydevices.com>
  Active  arm         armv7          mx6         congatec        cgtqmx6eval         cgtqmx6qeval                         cgtqmx6eval:IMX_CONFIG=board/freescale/imx/ddr/mx6q_4x_mt41j128.cfg,MX6Q                                                          Leo Sartre <lsartre@adeneo-embedded.com>
-+Active  arm         armv7          mx6         roj             mx6dlroj            mx6dlroj                             mx6dlroj:IMX_CONFIG=board/roj/mx6dlroj/mx6dl.cfg,MX6DL,DEFAULT_FDT_FILE="imx6dl-roj.dtb",DDR_MB=512                               Dario Pennisi <dario@iptronix.com>
++Active  arm         armv7          mx6         roj             waves               waves                                waves:IMX_CONFIG=board/roj/waves/mx6dl.cfg,MX6DL,DEFAULT_FDT_FILE="imx6dl-roj.dtb",DDR_MB=512                               Dario Pennisi <dario@iptronix.com>
  Active  arm         armv7          mx6         freescale       mx6qarm2            mx6qarm2                             mx6qarm2:IMX_CONFIG=board/freescale/mx6qarm2/imximage.cfg,MX6Q,DDR_MB=2048                                                        Jason Liu <r64343@freescale.com>
  Active  arm         armv7          mx6         freescale       mx6qarm2            mx6qarm2_lpddr2                      mx6qarm2:IMX_CONFIG=board/freescale/mx6qarm2/imximage.cfg,MX6Q,MX6DQ_LPDDR2,DDR_MB=512                                            Jason Liu <r64343@freescale.com>
  Active  arm         armv7          mx6         freescale       mx6qarm2            mx6dlarm2                            mx6qarm2:IMX_CONFIG=board/freescale/mx6qarm2/imximage_mx6dl.cfg,MX6DL,DDR_MB=2048                                                 Jason Liu <r64343@freescale.com>
-Index: git/board/roj/mx6dlroj/Makefile
+Index: git/board/roj/waves/Makefile
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/board/roj/mx6dlroj/Makefile	2018-01-03 14:06:06.908509640 +0100
++++ git/board/roj/waves/Makefile	2018-01-03 14:06:06.908509640 +0100
 @@ -0,0 +1,13 @@
 +#
 +# Copyright (C) 2015, Dario Pennisi <dario@iptronix.com>
@@ -28,10 +28,10 @@ Index: git/board/roj/mx6dlroj/Makefile
 +extra-$(CONFIG_USE_PLUGIN) :=  plugin.bin
 +$(obj)/plugin.bin: $(obj)/plugin.o
 +	$(OBJCOPY) -O binary --gap-fill 0xff $< $@
-Index: git/board/roj/mx6dlroj/mx6dl.cfg
+Index: git/board/roj/waves/mx6dl.cfg
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/board/roj/mx6dlroj/mx6dl.cfg	2018-01-03 14:06:06.912509640 +0100
++++ git/board/roj/waves/mx6dl.cfg	2018-01-03 14:06:06.912509640 +0100
 @@ -0,0 +1,152 @@
 +/*
 + * Copyright (C) 2014 Freescale Semiconductor, Inc.
@@ -185,10 +185,10 @@ Index: git/board/roj/mx6dlroj/mx6dl.cfg
 +DATA 4, 0x020e0018, 0x007F007F
 +DATA 4, 0x020e001c, 0x007F007F
 +#endif
-Index: git/board/roj/mx6dlroj/mx6dlroj.c
+Index: git/board/roj/waves/mx6dlroj.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/board/roj/mx6dlroj/mx6dlroj.c	2018-01-03 15:03:56.236411950 +0100
++++ git/board/roj/waves/mx6dlroj.c	2018-01-03 15:03:56.236411950 +0100
 @@ -0,0 +1,987 @@
 +/*
 + * Copyright (C) 2012-2014 Freescale Semiconductor, Inc.
@@ -1177,10 +1177,10 @@ Index: git/board/roj/mx6dlroj/mx6dlroj.c
 +	return 0;
 +}
 +#endif
-Index: git/board/roj/mx6dlroj/plugin.S
+Index: git/board/roj/waves/plugin.S
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/board/roj/mx6dlroj/plugin.S	2018-01-03 14:06:06.912509640 +0100
++++ git/board/roj/waves/plugin.S	2018-01-03 14:06:06.912509640 +0100
 @@ -0,0 +1,480 @@
 +/*
 + * Copyright (C) 2012-2014 Freescale Semiconductor, Inc.
@@ -1662,10 +1662,10 @@ Index: git/board/roj/mx6dlroj/plugin.S
 +
 +/* include the common plugin code here */
 +#include <asm/arch/mx6_plugin.S>
-Index: git/include/configs/mx6dlroj.h
+Index: git/include/configs/waves.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ git/include/configs/mx6dlroj.h	2018-01-03 14:06:06.912509640 +0100
++++ git/include/configs/waves.h	2018-01-03 14:06:06.912509640 +0100
 @@ -0,0 +1,43 @@
 +/*
 + * Copyright (C) 2012-2014 Freescale Semiconductor, Inc.

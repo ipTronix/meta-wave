@@ -11,7 +11,7 @@ SRC_URI_append_waveq = " \
 "
 
 SRC_URI_append_waves = " \
-   file://001_add_roj_mx6dl_target.patch \
-   file://001_fix_ddr_timings.patch \
+   file://001_add_waves_target.patch \
+   file://002_waves_fix_ddr_timings.patch \
 "
 
