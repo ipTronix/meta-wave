@@ -4,23 +4,21 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 SRC_URI = " \
-    file://linux \
+    file://mkimg \
     file://version \
-    file://update/update \
-    file://update/osd \
-    file://update/S90osd \
-    file://update/fwupg \
-    file://update/arm_sw.bin \
-    file://update/fpga_sw.bin \
+    file://zImage \
+    file://zImage-waveq.dtb \
+    file://zImage-waves.dtb \
+    file://recovery-waves.cpio.gz.u-boot \
+    file://dev-fb-qt5-waves \
 "
 
 S = "${WORKDIR}"
 
+FILES_${PN} += "/zzz/*"
+
 do_compile() {
-  mkisofs -o update.iso update && \
-  cp linux image.u && \
-  cat update.iso >> image.u  && \
-  dd if=version of=image
+  ./mkimg
 }
 
 do_install() {
