@@ -72,6 +72,7 @@ int main(int argc, char** argv)
   ofs = (ofs+127) & ~127;
   printf("ofs: %d %08X\n", ofs, ofs);
 
+#if 1
   sprintf(cmd,
           "dd if=/mnt/usb/recovery/image of=/home/root/update.iso bs=128 skip=%d",
           ofs/128);
@@ -87,6 +88,27 @@ int main(int argc, char** argv)
     return -1;
   }
 //TODO ret = exec("/mnt/iso/update");
+#else
+  sprintf(cmd,
+          "dd if=/mnt/usb/recovery/image "
+             "of=/home/root/dev-fb-qt5-wave.tar.bz2 "
+             "bs=128 skip=%d",
+          ofs/128);
+  ret = system(cmd);
+  if(ret){
+    printf("ERROR: splitting image file\n");
+    return -1;
+  }
+
+  ret = system("mkfs.ext3 -E nodiscard -j /dev/mmcblk1p2");
+
+  ret = system("mkdir -p /mnt/mmcblk1p2");
+  ret = system("mount -t ext3 /dev/mmcblk1p2 /mnt/mmcblk1p2");
+  ret = system("tar -xjvf /home/root/dev-fb-qt5-wave.tar.bz2 -C /mnt/mmcblk1p2");
+//  ret = system("umount /mnt/mmcblk1p2");
+ //cat /mnt/usb/recovery/image > imageflt  | tar -xjvf  -C /mnt/mmcblk1p2
+
+#endif
   return 0;
 }
 

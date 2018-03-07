@@ -236,7 +236,7 @@ int sendFile(const char * filename, enum e_dest dest)
             printf("file chunk read error %d: %s\n", errno, strerror(errno));
             return -1;
         }
-        printf("bytes letti dal file: %d\n", ret);
+        printf("bytes letti dal file: %d\r", ret);
 
         //flushes data received but not read
         tcflush(serial_fd, TCIFLUSH);

@@ -5,7 +5,6 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 SRC_URI = " \
     file://main.c \
-    file://fw_info \
     file://arm_sw.bin \
     file://fpga_sw.bin \
 "
@@ -22,7 +21,6 @@ do_install() {
 	install -d ${D}${bindir}
 	install -m 0755 fwupg ${D}${bindir}
   install -d ${D}/usr/fw
-  install -m 0644 fw_info ${D}/usr/fw
   install -m 0644 arm_sw.bin ${D}/usr/fw
   install -m 0644 fpga_sw.bin ${D}/usr/fw
 }
