@@ -18,7 +18,7 @@ Repeater {
     Rectangle {
         id: radio
         //anchors.centerIn: parent
-        x: radioGroup.xPos + index * 100; y: radioGroup.yPos
+        x: radioGroup.xPos + index * 76; y: radioGroup.yPos
         width: 20; height: 20; radius: 10
         border { color: "gray"; width: 1 }
         property string radioTxt: ""

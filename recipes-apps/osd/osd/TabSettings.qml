@@ -84,7 +84,7 @@ Item {
                 break;
 
             case 6:
-                if(data_model.ddc_ci_Mode < 2) {
+                if(data_model.ddc_ci_Mode < 3) {
                     data_model.ddc_ci_Mode++
 					data_model.updateSourceSettings()
                 }
@@ -388,7 +388,7 @@ Item {
 //                    //left: parent.left; leftMargin: 90
 //                }
                 xPos: 100; yPos: 10 //debug provvisorio
-                radioLabels: ["One-to-one", "Fit-all", "Fill-aspect"]
+                radioLabels: ["1 to 1", "Fill-all", "Fill-aspect"]
                 currItem: data_model.scalingMode
                 onCurr_ItemChanged: {
                     data_model.scalingMode = val
@@ -472,8 +472,8 @@ Item {
                 onClicked: resOsdTout()
             }
             OsdRadioButtons {
-                xPos: 100; yPos: 10
-                radioLabels: ["Manual", "Auto", "Off"]
+                xPos: 100; yPos: 10; model: 4
+                radioLabels: ["Manual", "Auto", "Multiple", "Off"]
                 currItem: data_model.ddc_ci_Mode
                 onCurr_ItemChanged: {
                     data_model.ddc_ci_Mode = val

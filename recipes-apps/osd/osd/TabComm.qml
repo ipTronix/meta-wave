@@ -722,20 +722,60 @@ Item {
 
                 //nota: -1 fa visualizzare i trattini "--" nella cella
                 ip0: dhcpLeaseWaiting ? - 1: data_model.ipAddr0
-                onIp0Up:  if(data_model.ipAddr0 < 255) data_model.ipAddr0++
-                onIp0Dwn: if(data_model.ipAddr0)       data_model.ipAddr0--
+                onIp0Up:  {
+					if(data_model.ipAddr0 < 255) {
+						data_model.ipAddr0++
+						data_model.ETHConfigAddress()
+					}
+				}
+                onIp0Dwn: {
+					if(data_model.ipAddr0) {
+						data_model.ipAddr0--
+						data_model.ETHConfigAddress()
+					}
+				}
 
                 ip1: dhcpLeaseWaiting ? - 1: data_model.ipAddr1
-                onIp1Up:  if(data_model.ipAddr1 < 255) data_model.ipAddr1++
-                onIp1Dwn: if(data_model.ipAddr1)       data_model.ipAddr1--
+                onIp1Up:  {
+					if(data_model.ipAddr1 < 255) {
+						data_model.ipAddr1++
+						data_model.ETHConfigAddress()
+					}
+				}
+                onIp1Dwn: {
+					if(data_model.ipAddr1) {
+						data_model.ipAddr1--
+						data_model.ETHConfigAddress()
+					}
+				}
 
                 ip2: dhcpLeaseWaiting ? - 1: data_model.ipAddr2
-                onIp2Up:  if(data_model.ipAddr2 < 255) data_model.ipAddr2++
-                onIp2Dwn: if(data_model.ipAddr2)       data_model.ipAddr2--
+                onIp2Up:  {
+					if(data_model.ipAddr2 < 255) {
+						data_model.ipAddr2++
+						data_model.ETHConfigAddress()
+					}
+				}
+                onIp2Dwn: {
+					if(data_model.ipAddr2) {
+						data_model.ipAddr2--
+						data_model.ETHConfigAddress()
+					}
+				}
 
                 ip3: dhcpLeaseWaiting ? - 1: data_model.ipAddr3
-                onIp3Up:  if(data_model.ipAddr3 < 255) data_model.ipAddr3++
-                onIp3Dwn: if(data_model.ipAddr3)       data_model.ipAddr3--
+                onIp3Up:  {
+					if(data_model.ipAddr3 < 255) {
+						data_model.ipAddr3++ 
+						data_model.ETHConfigAddress()
+					}
+				}
+                onIp3Dwn: {
+					if(data_model.ipAddr3) {
+						data_model.ipAddr3--
+						data_model.ETHConfigAddress()
+					}
+				}
             }
 
             //---------------------
@@ -748,20 +788,60 @@ Item {
                 ipEditTxt: "Subnet mask"
 
                 ip0: dhcpLeaseWaiting ? - 1: data_model.netMask0
-                onIp0Up:  if(data_model.netMask0 < 255) data_model.netMask0++
-                onIp0Dwn: if(data_model.netMask0)       data_model.netMask0--
+                onIp0Up:  {
+					if(data_model.netMask0 < 255) {
+						data_model.netMask0++
+						data_model.ETHConfigAddress()
+					}
+				}
+                onIp0Dwn: {
+					if(data_model.netMask0) {
+						data_model.netMask0--
+						data_model.ETHConfigAddress()
+					}
+				}
 
                 ip1: dhcpLeaseWaiting ? - 1: data_model.netMask1
-                onIp1Up:  if(data_model.netMask1 < 255) data_model.netMask1++
-                onIp1Dwn: if(data_model.netMask1)       data_model.netMask1--
+                onIp1Up:  {
+					if(data_model.netMask1 < 255) {
+						data_model.netMask1++
+						data_model.ETHConfigAddress()
+					}
+				}
+                onIp1Dwn: {
+					if(data_model.netMask1) {
+						data_model.netMask1--
+						data_model.ETHConfigAddress()
+					}
+				}
 
                 ip2: dhcpLeaseWaiting ? - 1: data_model.netMask2
-                onIp2Up:  if(data_model.netMask2 < 255) data_model.netMask2++
-                onIp2Dwn: if(data_model.netMask2)       data_model.netMask2--
+                onIp2Up:  {
+					if(data_model.netMask2 < 255) {
+						data_model.netMask2++
+						data_model.ETHConfigAddress()
+					}
+				}
+                onIp2Dwn: {
+					if(data_model.netMask2) {
+						data_model.netMask2--
+						data_model.ETHConfigAddress()
+					}
+				}
 
                 ip3: dhcpLeaseWaiting ? - 1: data_model.netMask3
-                onIp3Up:  if(data_model.netMask3 < 255) data_model.netMask3++
-                onIp3Dwn: if(data_model.netMask3)       data_model.netMask3--
+                onIp3Up:  {
+					if(data_model.netMask3 < 255) {
+						data_model.netMask3++
+						data_model.ETHConfigAddress()
+					}
+				}
+                onIp3Dwn: {
+					if(data_model.netMask3) {
+						data_model.netMask3--
+						data_model.ETHConfigAddress()
+					}
+				}
             }
 
             //---------------------

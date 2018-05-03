@@ -404,6 +404,7 @@ public slots:
 
     void setDefaultNetwParams();
     bool saveNetwParams();
+	void ETHConfigAddress();
     void startDHCPclient();
     bool isNetworkUp();
     bool isDHCP_leased();

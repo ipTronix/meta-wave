@@ -22,7 +22,8 @@ var osdPOT_ENA		 = 16
 
 var ddciMAN  = 0
 var ddciAUTO = 1
-var ddciOFF  = 2
+var ddciMULT = 2
+var ddciOFF  = 3
 
 var inModeMAN  = 0
 var inModeAUTO = 1

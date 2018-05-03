@@ -11,6 +11,7 @@
 #define manufacturer_ID_default		"NIN"
 #define monitor_type_default		""
 
+char acNetCmd[100];
 DataModel::DataModel(QObject *parent) :
     QObject(parent)
 {
@@ -31,6 +32,7 @@ DataModel::DataModel(QObject *parent) :
     }
     else {
         qDebug("Configurazione di rete: statica");
+		ETHConfigAddress();
     }
 
     m_logo_present = false;
@@ -656,6 +658,20 @@ bool DataModel::saveNetwParams()
     }
     qDebug("Errore salvataggio file parametri net");
     return false;
+}
+
+/***************************************************************************
+*   Routine:    ETHConfigAddress()
+*   Decrizione:
+*   Note:
+****************************************************************************/
+void DataModel::ETHConfigAddress()
+{
+    PRINT_FUNC_NAME
+	
+	sprintf(acNetCmd, "ifconfig eth0 %d.%d.%d.%d netmask %d.%d.%d.%d", m_ipAddr0, m_ipAddr1, m_ipAddr2, m_ipAddr3, m_netMask0, m_netMask1, m_netMask2, m_netMask3);
+	system(acNetCmd);
+	qDebug(acNetCmd);
 }
 
 /***************************************************************************
