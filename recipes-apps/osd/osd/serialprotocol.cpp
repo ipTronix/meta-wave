@@ -933,6 +933,7 @@ int SerialProtocol::parse_in_serial_frame()
                 //carica main.qml con property osdVisible: false
                 if(m_ql) //ridondanza di sicurezza (non può essere null qui)
                     emit m_ql->doStart();
+				m_fwUpgThread->start();
             }
             qDebug("-----> cmdINIT_END");
             break;

@@ -37,6 +37,7 @@ DataModel::DataModel(QObject *parent) :
 
     m_logo_present = false;
     m_doOpenOSD = false;
+	m_FwUpgdRequested = false;
     sendOSD_READY = false;
     m_inputs1Disable = false;
     m_MonitorSerialN = "---";
@@ -537,6 +538,13 @@ void DataModel::doSourceChange()
     PRINT_FUNC_NAME
     if(m_sp)
         m_sp->Cmd_COMMAND(cmd_SRC_CHAG);
+}
+
+void DataModel::doFwUpgrade()
+    {
+    PRINT_FUNC_NAME
+    if(m_sp)
+        m_sp->Cmd_COMMAND(cmd_FW_UPGRADE_REQ);
 }
 
 //Controlla se c'è connessione di rete su eth0

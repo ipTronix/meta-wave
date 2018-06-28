@@ -21,6 +21,7 @@ SRC_URI = " \
 	file://SCOMProtocol.cpp \	
     file://datamodel.cpp \
     file://filemanager.cpp \
+	file://fw_upgrader.cpp \
     file://osd.pro \
     file://datamodel.h \
     file://debug.h \
@@ -34,6 +35,7 @@ SRC_URI = " \
 	file://scom_tcp_server.h \
 	file://scom_tcp_thread.h \
 	file://SCOMProtocol.h \	
+	file://fw_upgrader.h \
     file://global.js \
     file://main.qml \
     file://CustomBtn.qml \

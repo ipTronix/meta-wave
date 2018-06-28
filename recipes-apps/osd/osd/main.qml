@@ -46,6 +46,8 @@ ApplicationWindow {
 
     property string currOsdTab: ""
     property bool osdVisible: false
+    property bool fwupgPopupRequest: false
+    property bool fwupgPopupVisible: false
 
     //per navigazione da tastiera
     property bool tabEditActive: false
@@ -70,7 +72,9 @@ ApplicationWindow {
 
         //se nel messaggio INIT_END ho il flag segnale video non presente
         //faccio apparire OSD all'avvio
-        if(data_model.doOpenOSD)
+		if (data_model.FwUpgdRequested)
+			reqForUpgrade()
+        else if(data_model.doOpenOSD)
             showOSD()
 
         if(data_model.inputs1Disable)
@@ -84,7 +88,7 @@ ApplicationWindow {
     //-----------------------
     function showOSD()
     {
-        if(osdVisible === false) {
+        if(osdVisible === false && fwupgPopupVisible === false) {
             osdVisible = true
             currOsdTab = tabItems[0] //tab settings
             currTab = 0
@@ -108,6 +112,12 @@ ApplicationWindow {
         //nota: è in conflitto con la funzione keypress relay
         onCloseOSD: hideOSD()
     }
+	
+	Connections {
+		target: sig_conn
+		onReqDisplayOfUpgradePopup: reqForUpgrade()
+		onReqRemoveOfUpgradePopup: hideFWUpdgPopup()
+	}
 
     function hideOSD()
     {
@@ -122,9 +132,52 @@ ApplicationWindow {
                 doSaveNetworkPar = false
                 data_model.saveNetwParams()
             }
+			
+			if (fwupgPopupRequest === true)
+				showFWUpdgPopup()
+        }
+    }
+		
+    function showFWUpdgPopup()
+    {
+        if(osdVisible === false && fwupgPopupVisible === false) {
+            fwupgPopupVisible = true
+			fwupgPopupRequest = false
+            //show mouse cursor
+            bkgMouseArea.cursorShape = Qt.ArrowCursor
+            bkgMouseArea.waitRelease = 2
+            data_model.doOSDstatus(true)
         }
     }
 
+    function hideFWUpdgPopup()
+    {
+        //non chiudo se keypress relay in corso
+        if(fwupgPopupVisible === true) {
+            fwupgPopupVisible = false
+            bkgMouseArea.hideCursor()
+            data_model.doOSDstatus(false)
+        }
+		fwupgPopupRequest = false
+    }
+	
+	function reqForUpgrade()
+	{
+		console.log("-- upgrade request")
+		if(osdVisible === false){
+			showFWUpdgPopup()
+		}
+		else{
+			fwupgPopupRequest = true;
+		}
+	}
+	
+	function btnUpgradeOKAction()
+	{
+		hideFWUpdgPopup()
+		data_model.doFwUpgrade()
+	}
+	
     //-----------------------
     // Chroma key Background
     //-----------------------
@@ -362,7 +415,7 @@ Rectangle {
         anchors.centerIn: parent
         color: color_Background
         visible: osdVisible
-        focus: true
+        focus: !fwupgPopupVisible
 
         Keys.onReleased: {
             if(event.key === Qt.Key_Escape) {
@@ -551,7 +604,99 @@ Rectangle {
             }
         }
     }
+	
+	//---------------------------
+	//		Fw Upgrade PopUp
+	//---------------------------
+    Rectangle {
+		id: popup_fwupgrd
+        width: 380; height: 160
+        anchors.centerIn: parent
+        color: color_Background
+        visible: fwupgPopupVisible
+        focus: fwupgPopupVisible
 
+		property int currSel: -1
+		
+		Component.onCompleted: {
+			bkgMouseArea.cursorShape = Qt.ArrowCursor
+		}
+		
+		function test_pp(val)
+		{
+			console.log('valore corrente ', val)
+		}
+		
+        //MouseArea {
+        //    id: dummyMouseArea2
+		//    visible: fwupgPopupVisible
+        //    anchors.fill: parent
+        //    onClicked: console.log("Popup FwUpgd Clicked")
+        //    //test lollo
+        //    //cursorShape: Qt.ArrowCursor
+		//	onEntered: console.log("Popup FwUpgd entered")
+		//	onExited:  console.log("Popup FwUpgd exited")
+        //}
+		
+		Text {
+			anchors {
+				top:  parent.top; topMargin: 28
+				horizontalCenter: parent.horizontalCenter
+			}
+			color: color_HeavyDark
+			font { family: "Myriad Pro"; weight: Font.Bold; pixelSize: 18 }
+			text: qsTr("Valid firmware file found on USB device")
+		}
+		
+		CustomBtn {
+			id: btnOK
+			x: 20; y: 88
+			width: 160
+			btnColor: color_Dark
+			highlighted: (parent.currSel === 0 && !btnCANCEL.mouseHovered)
+			btnTxt: qsTr("Upgrade")
+			onBtnClicked: btnUpgradeOKAction()
+		}
+
+		CustomBtn {
+			id: btnCANCEL
+			x: 200; y: 88
+			width: 160
+			btnColor: color_Dark
+			highlighted: (parent.currSel === 1 && !btnOK.mouseHovered)
+			btnTxt: qsTr("Cancel")
+			onBtnClicked: hideFWUpdgPopup()
+		}
+		
+        //-------------------------------------------
+        // Navigazione tramite tastiera
+        //-------------------------------------------
+        Keys.onPressed: {
+			
+            if(event.key === Qt.Key_Plus)
+                currSel = (currSel < 1)? currSel+1 : 1
+				
+            else if(event.key === Qt.Key_Minus)
+                currSel = (currSel > 0)? currSel-1 : 0
+				
+            //else if(event.key === Qt.Key_Return)
+            //LOLLO per test Windows
+            else if(event.key === Qt.Key_Enter) {
+				if (currSel == 0)
+					btnUpgradeOKAction()
+				else if (currSel == 1)
+					hideFWUpdgPopup()
+				currSel = -1
+			}
+            else if(event.key === Qt.Key_Escape)
+                currSel = -1
+
+            //prevents the key event from being propagated to the item's parent.
+            event.accepted = true;
+        }
+		
+	}
+	
     //per simulare la tastiera se non c'è il driver (es. uno dei monitor Lorenzo)
     //NOTA: non rileva l'evento di rilascio, quindi il tasto ESC non funziona
     //completamente

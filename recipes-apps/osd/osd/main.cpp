@@ -17,6 +17,7 @@
 #include "qml_launcher.h"
 #include "scom_tcp_server.h"
 #include "SCOMProtocol.h"
+#include "fw_upgrader.h"
 
 int main(int argc, char *argv[])
 {
@@ -54,6 +55,15 @@ int main(int argc, char *argv[])
 #ifndef DEBUG_WINDOWS
     commThread->start();
 #endif
+
+	QThread *fw_upg_thread = new QThread;
+	FwUpgrader* fw_upg_obj = new FwUpgrader();
+	fw_upg_obj->moveToThread(fw_upg_thread);
+    QObject::connect(fw_upg_thread, SIGNAL(started()), fw_upg_obj, SLOT(FwUpgraderRunLoop()));
+	sp->RegisterFwUpgThread(fw_upg_thread);
+	fw_upg_obj->RegisterQMLlauncher(launcher);
+	fw_upg_obj->RegisterDm(data_model);
+	
     //scambio dei puntatori delle classi
     data_model->RegisterFm(file_manager);
     data_model->RegisterSp(sp);

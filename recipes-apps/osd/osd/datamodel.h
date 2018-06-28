@@ -47,6 +47,7 @@ class DataModel : public QObject
     int m_remoteSerialAdr;
     int m_j24config;
     int m_lockPIN;
+	bool m_FwUpgdRequested;
 
     QString m_MonitorSerialN;
     QString m_SoftwareID;
@@ -161,6 +162,8 @@ public:
     Q_PROPERTY(bool OSD_SW_Ver_OK      MEMBER m_OSD_SW_Ver_OK      NOTIFY OSD_SW_Ver_OK_Changed)
     Q_PROPERTY(bool LPC_SW_Ver_OK      MEMBER m_LPC_SW_Ver_OK      NOTIFY LPC_SW_Ver_OK_Changed)
     Q_PROPERTY(bool FPGA_SW_Ver_OK     MEMBER m_FPGA_SW_Ver_OK     NOTIFY FPGA_SW_Ver_OK_Changed)
+	
+    Q_PROPERTY(bool FwUpgdRequested    MEMBER m_FwUpgdRequested    NOTIFY FwUpgdRequestedChanged)
 	
     Q_PROPERTY(int ipAddr0             MEMBER m_ipAddr0            NOTIFY ipAddr0Changed)
     Q_PROPERTY(int ipAddr1             MEMBER m_ipAddr1            NOTIFY ipAddr1Changed)
@@ -316,6 +319,8 @@ signals:
 	void OSD_SW_Ver_OK_Changed(bool);
 	void LPC_SW_Ver_OK_Changed(bool);
 	void FPGA_SW_Ver_OK_Changed(bool);
+	
+	void FwUpgdRequestedChanged(bool);
 
     void closeOSD();
 
@@ -401,6 +406,7 @@ public slots:
     void doBrightBroadUP();
     void doBrightBroadDOWN();
     void doSourceChange();
+	void doFwUpgrade();
 
     void setDefaultNetwParams();
     bool saveNetwParams();

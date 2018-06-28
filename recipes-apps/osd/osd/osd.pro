@@ -11,6 +11,7 @@ SOURCES += main.cpp \
 	scom_tcp_server.cpp \
 	scom_tcp_thread.cpp \
 	SCOMProtocol.cpp \
+	fw_upgrader.cpp \
     qml_launcher.cpp
 
 RESOURCES += qml.qrc \
@@ -39,4 +40,5 @@ HEADERS += \
 	scom_tcp_server.h \
 	scom_tcp_thread.h \
 	SCOMProtocol.h \
+	fw_upgrader.h \
     qml_launcher.h

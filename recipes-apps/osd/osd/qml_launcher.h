@@ -36,6 +36,8 @@ signals:
     void newSourceData();
     void settingsCmdSent();
     void updateTemperature();
+    void reqDisplayOfUpgradePopup();
+    void reqRemoveOfUpgradePopup();
 
 public slots:
     void startOSD();

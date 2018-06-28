@@ -53,7 +53,8 @@ enum {
     cmd_BRT_DWN 	    = 7,
     cmd_BRT_BROAD_UP    = 8,
     cmd_BRT_BROAD_DWN   = 9,
-    cmd_SRC_CHAG 	    = 10
+    cmd_SRC_CHAG 	    = 10,
+	cmd_FW_UPGRADE_REQ	= 11
 };
 
 class QML_Launcher;
@@ -68,6 +69,7 @@ class SerialProtocol : public QObject
     TempMonitor  *m_tm;
     QML_Launcher *m_ql;
     FileManager *m_fm;
+	QThread *m_fwUpgThread;
 
     char txbuff[256];
 
@@ -97,6 +99,7 @@ public:
     void RegisterTm(TempMonitor *tmon) { m_tm = tmon; }
     void RegisterQMLlauncher(QML_Launcher *ql) { m_ql = ql; }
 	void RegisterFm(FileManager *fmanager) { m_fm = fmanager; }
+	void RegisterFwUpgThread(QThread *fwUpgThread){ m_fwUpgThread = fwUpgThread; }
     bool setPacketWaited;
 
 signals:
