@@ -403,21 +403,28 @@ int main(int argc, char** argv)
       fpga_bin = FPGA_SW_UPDATE_FILE;
       lpc_bin  = ARM_SW_UPDATE_FILE;
     }
+
     printf("Upgrade file:\n"
            "  FPGA: %s\n"
            "  LPC : %s\n",
            fpga_bin,
            lpc_bin);
-
+/*
     version = version_get();
     printf("Upgrade version: %08X\n", version);
-
+*/
     fflush(stdout);
 
     ret = openSerialPort();
     if(ret < 0) {
         printf("Serial comm open error\n");
         return -1;
+    }
+
+    if(argc==2 && memcmp(argv[1], "reset", 6)==0){
+        printf("Send Reset command\n");
+        send_reset();
+        return 0;
     }
 
     printf("Wait for LPC bootloader mode\n");
@@ -453,6 +460,7 @@ int main(int argc, char** argv)
     }
 
     /* aggiornamento file versione */
+/*
     printf("Update Version file\n");
     printf("mount EMMC VFAT partition\n");
 
@@ -478,8 +486,8 @@ int main(int argc, char** argv)
     } else {
       printf("Mount /mnt/p1 failed\n");
     }
-
-    send_reset();
+*/
+//    send_reset();
 
     return 0;
 

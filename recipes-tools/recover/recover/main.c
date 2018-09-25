@@ -19,14 +19,22 @@ typedef struct {
   uint32_t version; // version of linux-dtb-fs
   uint32_t img_pos; // linux image
   uint32_t img_len;
-  uint32_t dt1_pos; // device tree blob
+  uint32_t dt1_pos; // device tree blob 1
   uint32_t dt1_len;
-  uint32_t dt2_pos;
+  uint32_t dt2_pos; // device tree blob 2
   uint32_t dt2_len;
   uint32_t rfs_pos; // ram file system
   uint32_t rfs_len;
 }sImgHdr, *psImgHdr;
+/*
+#define SOURCE_DIR "/mnt/fat"
+#define SOURCE_DEV "/dev/mmcblk1p1"
+#define IMAGE_FILE "/mnt/fat/image"
+*/
 
+#define SOURCE_DIR "/mnt/usb"
+#define SOURCE_DEV "/dev/sda1"
+#define IMAGE_FILE "/mnt/usb/recovery/image"
 
 sImgHdr imgHdr;
 
@@ -44,37 +52,48 @@ int main(int argc, char** argv)
 
   printf( "\n"
           "-----------------------------\n"
-          "   recovery appliaction\n"
+          "   recovery application\n"
           "Compiled: "__DATE__ " " __TIME__ "\n"
           "-----------------------------\n");
 
-  printf("Create /mnt/usb\n");
-  mkdir("/mnt/usb", 0777);
+  printf("Create %s\n", SOURCE_DIR);
+//  mkdir("/mnt/usb", 0777);
+  mkdir(SOURCE_DIR, 0777);
 
   printf("Create /mnt/iso\n");
   mkdir("/mnt/iso", 0777);
 
-  printf("Mount USB Disk\n");
-  ret = system("mount /dev/sda1 /mnt/usb");
+  printf("Mount source device\n");
+  sprintf(cmd,
+          "mount %s %s",
+          SOURCE_DEV,
+          SOURCE_DIR);
+  ret = system(cmd);//"mount /dev/sda1 /mnt/usb");
   if(ret){
-    printf("ERROR:Mount /mnt/usb FAILED\n");
+    printf("ERROR:Mount %s FAILED\n", SOURCE_DEV);
     return -1;
   }
 
   printf("Get image header\n");
-  pImgHdr = imgHdrGet("/mnt/usb/recovery/image");
+  pImgHdr = imgHdrGet(IMAGE_FILE);//"/mnt/usb/recovery/image");
   if(!pImgHdr){
     printf("ERROR:reading image header\n");
     return -1;
   }
 
+  if (!pImgHdr->rfs_pos && !pImgHdr->rfs_len) {
+    pImgHdr->rfs_pos = pImgHdr->dt2_pos;
+    pImgHdr->rfs_len = pImgHdr->dt2_len;
+  }
   ofs = pImgHdr->rfs_pos + pImgHdr->rfs_len;
   ofs = (ofs+127) & ~127;
   printf("ofs: %d %08X\n", ofs, ofs);
 
 #if 1
+  printf("splitting image file in /home/root/update.iso\n");
   sprintf(cmd,
-          "dd if=/mnt/usb/recovery/image of=/home/root/update.iso bs=128 skip=%d",
+          "dd if=%s of=/home/root/update.iso bs=128 skip=%d",
+          IMAGE_FILE,
           ofs/128);
   ret = system(cmd);
   if(ret){
@@ -82,6 +101,7 @@ int main(int argc, char** argv)
     return -1;
   }
 
+  printf("mounting iso image\n");
   ret = system("mount /home/root/update.iso /mnt/iso");
   if(ret){
     printf("ERROR: mounting iso image\n");
@@ -90,9 +110,10 @@ int main(int argc, char** argv)
 //TODO ret = exec("/mnt/iso/update");
 #else
   sprintf(cmd,
-          "dd if=/mnt/usb/recovery/image "
+          "dd if=%s "
              "of=/home/root/dev-fb-qt5-wave.tar.bz2 "
              "bs=128 skip=%d",
+          IMAGE_FILE,
           ofs/128);
   ret = system(cmd);
   if(ret){
@@ -101,7 +122,6 @@ int main(int argc, char** argv)
   }
 
   ret = system("mkfs.ext3 -E nodiscard -j /dev/mmcblk1p2");
-
   ret = system("mkdir -p /mnt/mmcblk1p2");
   ret = system("mount -t ext3 /dev/mmcblk1p2 /mnt/mmcblk1p2");
   ret = system("tar -xjvf /home/root/dev-fb-qt5-wave.tar.bz2 -C /mnt/mmcblk1p2");
