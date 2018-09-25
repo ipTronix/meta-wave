@@ -1,1 +1,3 @@
 KERNEL=="mmcblk0p1" SUBSYSTEM=="block" RUN+="/bin/mount /mnt/sd"
+ACTION=="add" KERNEL=="sda1" SUBSYSTEM=="block" RUN+="/bin/mount /mnt/usb"
+ACTION=="remove" KERNEL=="sda1" SUBSYSTEM=="block" RUN+="/bin/umount /mnt/usb"

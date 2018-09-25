@@ -12,6 +12,8 @@ SRC_URI = " \
            file://wave_cfg.txt \
            file://fw_info.txt \
            file://version \
+           file://networking \
+           file://copier \
            file://COPYRIGHT \
 "
 FILES_${PN} += "/opt/*"
@@ -26,15 +28,21 @@ do_install () {
   install -m 0755 20-sd_mount.rules ${D}${sysconfdir}/udev/rules.d/
   install -d ${D}${sysconfdir}/rc5.d
   install -m 0755 S90osd ${D}${sysconfdir}/rc5.d
+  install -d ${D}${sysconfdir}/init.d
+  install -m 0755 networking ${D}${sysconfdir}/init.d
   install -d ${D}/opt/osd
   install -m 0644 wave_cfg.txt ${D}/opt/osd
   install -d ${D}/etc/udhcpc.d
   install -m 0755 50default ${D}/etc/udhcpc.d
+  install -d ${D}/bin
+  install -m 0755 copier ${D}/bin
   install -d ${D}/zzz
   install -m 0755 fw_info.txt ${D}/zzz
   install -m 0755 version ${D}/zzz
   mkdir -p ${D}/mnt
   mkdir -p ${D}/mnt/sd
+  mkdir -p ${D}/mnt/usb
 }
 
 FILES_${PN} += "/mnt/sd"
+FILES_${PN} += "/mnt/usb"
