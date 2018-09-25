@@ -284,11 +284,11 @@ Index: git/include/configs/wave_common.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
 +++ git/include/configs/wave_common.h	2017-09-21 11:48:05.117138675 +0200
-@@ -0,0 +1,294 @@
+@@ -0,0 +1,303 @@
 +/*
 + * Copyright (C) 2012 Freescale Semiconductor, Inc.
 + *
-+ * Configuration settings for the Freescale i.MX6Q SabreSD board.
++ * Configuration settings for the Wave Evolution board.
 + *
 + * SPDX-License-Identifier:	GPL-2.0+
 + */
@@ -391,6 +391,8 @@ Index: git/include/configs/wave_common.h
 +#define CONFIG_CMD_SETEXPR
 +#undef CONFIG_CMD_IMLS
 +
++#define CONFIG_CMD_RECOVERY
++
 +#define CONFIG_BOOTDELAY               1
 +
 +#define CONFIG_LOADADDR                        0x12000000
@@ -446,9 +448,10 @@ Index: git/include/configs/wave_common.h
 +			"fi; "	\
 +		"fi\0" \
 +	EMMC_ENV	  \
-+ "mmcsetroot=setenv mmcroot /dev/mmcblk${mmcdev}p${mmcrootpart} rootwait rw\0" \
++	"mmcsetroot=setenv mmcroot /dev/mmcblk${mmcdev}p${mmcrootpart} rootwait rw\0" \
++	"video_args=video=mxcfb0:dev=ldb,1024x768M-32@30,if=LVDS888,bpp=32\0" \
 +	"mmcargs=run mmcsetroot;setenv bootargs console=${console},${baudrate} " \
-+		"root=${mmcroot}\0" \
++		"root=${mmcroot} ${video_args}\0" \
 +	"loadbootscript=" \
 +		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 +	"bootscript=echo Running bootscript from mmc ...; " \
@@ -493,9 +496,15 @@ Index: git/include/configs/wave_common.h
 +			"fi; " \
 +		"else " \
 +			"bootz; " \
-+		"fi;\0"
++		"fi;\0" \
++	"logoload=echo Loading LOGO ...; " \
++		"if run logosd; then bmp display 0x20000000; else " \
++		"run logommc; bmp display 0x20000000; fi\0" \
++	"logommc=fatload mmc 1:1 0x20000000 image24.bmp\0" \
++	"logosd=fatload mmc 0:1 0x20000000 imagesd24.bmp\0"
 +
 +#define CONFIG_BOOTCOMMAND \
++	"run logoload;recovery;" \
 +	"mmc dev ${mmcdev};" \
 +	"if mmc rescan; then " \
 +		"if run loadbootscript; then " \

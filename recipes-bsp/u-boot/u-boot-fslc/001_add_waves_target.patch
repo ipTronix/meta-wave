@@ -497,11 +497,11 @@ Index: git/include/configs/wave_common.h
 +		"else " \
 +			"bootz; " \
 +		"fi;\0" \
-+		"logoload=echo Loading LOGO ...; " \
-+			"if run logosd; then bmp display 0x20000000; else " \
-+			"run logommc; bmp display 0x20000000; fi\0" \
-+		"logommc=fatload mmc 1:1 0x20000000 image24.bmp\0" \
-+		"logosd=fatload mmc 0:1 0x20000000 imagesd24.bmp\0"
++	"logoload=echo Loading LOGO ...; " \
++		"if run logosd; then bmp display 0x20000000; else " \
++		"run logommc; bmp display 0x20000000; fi\0" \
++	"logommc=fatload mmc 1:1 0x20000000 image24.bmp\0" \
++	"logosd=fatload mmc 0:1 0x20000000 imagesd24.bmp\0"
 +
 +#define CONFIG_BOOTCOMMAND \
 +	"run logoload;recovery;" \

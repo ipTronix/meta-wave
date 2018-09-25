@@ -1,0 +1,13 @@
+Index: git/include/configs/wave_common.h
+===================================================================
+--- git.orig/include/configs/wave_common.h	2018-05-10 16:56:49.522651670 +0200
++++ git/include/configs/wave_common.h	2018-09-17 10:35:12.138974284 +0200
+@@ -220,7 +220,7 @@
+ 		"logosd=fatload mmc 0:1 0x20000000 imagesd24.bmp\0"
+ 
+ #define CONFIG_BOOTCOMMAND \
+-	"run logoload;recovery ${usbretry};" \
++	"run logoload;" \
+ 	"mmc dev ${mmcdev};" \
+ 	"if mmc rescan; then " \
+ 		"if run loadbootscript; then " \

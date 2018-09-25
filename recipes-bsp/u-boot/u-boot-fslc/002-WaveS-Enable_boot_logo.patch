@@ -20812,7 +20812,7 @@ Index: git/include/configs/wave_common.h
   * Copyright (C) 2012 Freescale Semiconductor, Inc.
   *
 - * Configuration settings for the Wave Evolution board.
-+ * Configuration settings for the Freescale i.MX6Q SabreSD board.
++ * Configuration settings for the Wave Evolution board.
   *
   * SPDX-License-Identifier:	GPL-2.0+
   */
@@ -20821,11 +20821,11 @@ Index: git/include/configs/wave_common.h
  			"bootz; " \
  		"fi;\0" \
 +		"usbretry=1\0" \
- 		"logoload=echo Loading LOGO ...; " \
- 			"if run logosd; then bmp display 0x20000000; else " \
- 			"run logommc; bmp display 0x20000000; fi\0" \
+ 	"logoload=echo Loading LOGO ...; " \
+ 		"if run logosd; then bmp display 0x20000000; else " \
+ 		"run logommc; bmp display 0x20000000; fi\0" \
 @@ -217,7 +218,7 @@
- 		"logosd=fatload mmc 0:1 0x20000000 imagesd24.bmp\0"
+ 	"logosd=fatload mmc 0:1 0x20000000 imagesd24.bmp\0"
  
  #define CONFIG_BOOTCOMMAND \
 -	"run logoload;recovery;" \
