@@ -12,7 +12,8 @@ IMAGE_FSTYPES += "cpio.gz.u-boot"
 inherit core-image
 
 IMAGE_ROOTFS_SIZE ?= "8192"
-IMAGE_ROOTFS_EXTRA_SPACE_append = "${@bb.utils.contains("DISTRO_FEATURES", "systemd", " + 4096", "" ,d)}"
+
+# IMAGE_ROOTFS_EXTRA_SPACE_append = "${@bb.utils.contains("DISTRO_FEATURES", "systemd", " + 4096", "" ,d)}"
 
 FEATURE_PACKAGES_mtd = "packagegroup-fsl-mfgtool-mtd"
 FEATURE_PACKAGES_extfs = "packagegroup-fsl-mfgtool-extfs"
@@ -25,7 +26,13 @@ DEFAULT_FS_SUPPORT = " \
 
 IMAGE_INSTALL_append = " \
     e2fsprogs \
-    imageflt \
-    recover \
+    dosfstools \
+    util-linux \
     recovery-script \
+    fwupg \
 "
+
+#
+#    imageflt \
+#    recover \
+#
