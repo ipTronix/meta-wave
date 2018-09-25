@@ -4,7 +4,8 @@ LICENSE = "MIT"
 
 inherit core-image
 
-IMAGE_FSTYPES = "tar.bz2"
+#IMAGE_FSTYPES = "tar.bz2"
+IMAGE_FSTYPES = "tar.gz"
 
 IMAGE_INSTALL_append = " \
     firmware-imx-vpu-imx6q \
@@ -15,16 +16,14 @@ IMAGE_OVERHEAD_FACTOR = "2.0"
 
 export IMAGE_BASENAME = "dev-fb-qt5"
 
-EXTRA_IMAGE_FEATURES = "debug-tweaks ssh-server-openssh tools-testapps "
+EXTRA_IMAGE_FEATURES = "debug-tweaks ssh-server-openssh "
 
-IMAGE_INSTALL_append = " binutils libgcc libstdc++ \
+IMAGE_INSTALL_append = " libgcc libstdc++ \
     ccache chkconfig glib-networking glibmm \
     packagegroup-core-buildessential pkgconfig  \
-    boost cmake zlib glib-2.0 \
+    boost zlib glib-2.0 \
     iproute2 \
-    packagegroup-qt5-qtcreator-debug \
     cpufrequtils \
-    gdb \
     gstreamer1.0 \
     gstreamer1.0-plugins-imx \
     gstreamer1.0-plugins-good \
@@ -35,7 +34,6 @@ IMAGE_INSTALL_append = " binutils libgcc libstdc++ \
     gstreamer1.0-plugins-base \
     openssh-sftp-server \
     imx-vpu \
-    imx-test \
     qtbase-fonts \
     qtbase-plugins \
     qtbase-tools \
@@ -56,19 +54,16 @@ IMAGE_INSTALL_append = " binutils libgcc libstdc++ \
     qtscript \
     qtgraphicaleffects-qmlplugins \
     qtconnectivity-qmlplugins \
-    cairo pango fontconfig freetype pulseaudio dbus \
+    fontconfig freetype pulseaudio dbus \
     alsa-lib alsa-tools alsa-state fsl-alsa-plugins \
-    tslib evtest tslib-conf tslib-tests tslib-calibrate \
     i2c-tools \
     mtd-utils imx-kobs mtd-utils-ubifs \
     e2fsprogs \
-    cinematicexperience \
     packagegroup-fsl-tools-gpu \
     packagegroup-fsl-tools-gpu-external \
-    packagegroup-fsl-tools-testapps \
-    packagegroup-fsl-tools-benchmark \
-    strace \
     fwupg \
     osd \
+    u-boot-mkimage \
     script-install \
     "
+
